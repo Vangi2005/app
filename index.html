@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Human Typing… — Campus Peer Connection Prototype</title>
+  <!-- Load Tailwind CSS before configuring tailwind.config -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Fraunces (warm editorial serif) & Plus Jakarta Sans (clean friendly UI) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    window.tailwind = window.tailwind || {};
+    window.tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            honeydew: '#F6FFEA',
+            softPeach: '#FFDE96',
+            coralGlow: '#FA855A',
+            tomatoJam: '#C93638',
+            skyBlue: '#62C4DA',
+            espresso: '#2D2422',
+            espressoLight: '#5C4D49',
+            warmWhite: '#FFFDF8',
+            leafGreen: '#2E8B57',
+          },
+          fontFamily: {
+            display: ['Fraunces', 'Georgia', 'serif'],
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+          },
+          boxShadow: {
+            'soft': '0 10px 30px -5px rgba(45, 36, 34, 0.08)',
+            'card': '0 4px 16px -2px rgba(45, 36, 34, 0.06)',
+            'sticker': '0 14px 34px -6px rgba(45, 36, 34, 0.14)',
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    body {
+      background-color: #EEF5E3;
+      background-image: 
+        radial-gradient(at 15% 15%, rgba(255, 222, 150, 0.45) 0px, transparent 50%),
+        radial-gradient(at 85% 20%, rgba(98, 196, 218, 0.28) 0px, transparent 50%),
+        radial-gradient(at 50% 90%, rgba(250, 133, 90, 0.22) 0px, transparent 55%);
+      color: #2D2422;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    @keyframes bounceSlow {
+      0%, 80%, 100% { transform: translateY(0); opacity: 0.55; }
+      40% { transform: translateY(-5px); opacity: 1; }
+    }
+    .dot-1 { animation: bounceSlow 1.6s infinite ease-in-out 0s; }
+    .dot-2 { animation: bounceSlow 1.6s infinite ease-in-out 0.22s; }
+    .dot-3 { animation: bounceSlow 1.6s infinite ease-in-out 0.44s; }
+
+    @keyframes pulseDot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.75; }
+    }
+    .green-dot-pulse { animation: pulseDot 2.2s infinite ease-in-out; }
+
+    @keyframes slideUpFade {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .msg-enter { animation: slideUpFade 0.28s ease-out forwards; }
+
+    .chat-scroll::-webkit-scrollbar { width: 5px; height: 5px; }
+    .chat-scroll::-webkit-scrollbar-track { background: transparent; }
+    .chat-scroll::-webkit-scrollbar-thumb { background: rgba(45, 36, 34, 0.16); border-radius: 9999px; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-between py-3 px-3 sm:px-6 selection:bg-softPeach selection:text-espresso">
+
+  <!-- Top Presentation & Testing Bar -->
+  <header class="w-full max-w-5xl flex flex-wrap items-center justify-between gap-3 mb-3 px-2">
+    <div class="flex items-center gap-2.5">
+      <span class="inline-flex items-center justify-center w-8 h-8 rounded-2xl bg-softPeach text-espresso font-display font-bold text-sm shadow-sm">
+        •••
+      </span>
+      <div>
+        <span class="font-display font-bold text-base sm:text-lg text-espresso tracking-tight">Human Typing…</span>
+        <span class="hidden md:inline-block text-xs text-espressoLight ml-2">Mumbai Campus Prototype · Peer Connection</span>
+      </div>
+    </div>
+
+    <!-- Mode Switcher Pill -->
+    <div class="inline-flex flex-wrap p-1 rounded-2xl sm:rounded-full bg-warmWhite/90 backdrop-blur-sm border border-espresso/10 shadow-sm gap-1">
+      <button id="tab-phone" onclick="switchView('phone')" class="px-3.5 py-1.5 rounded-xl sm:rounded-full text-xs sm:text-sm font-semibold transition-all bg-espresso text-honeydew shadow-sm">
+        Mobile Chat (Student)
+      </button>
+      <button id="tab-woz" onclick="switchView('woz')" class="px-3.5 py-1.5 rounded-xl sm:rounded-full text-xs sm:text-sm font-semibold transition-all text-espressoLight hover:text-espresso flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-coralGlow"></span>
+        <span>Split Wizard-of-Oz Demo</span>
+      </button>
+      <button id="tab-sticker" onclick="switchView('sticker')" class="px-3.5 py-1.5 rounded-xl sm:rounded-full text-xs sm:text-sm font-semibold transition-all text-espressoLight hover:text-espresso">
+        Sticker &amp; Table Card
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT AREA -->
+  <main class="w-full flex-1 flex items-center justify-center my-auto">
+
+    <!-- ========================================================== -->
+    <!-- VIEW 1 & 2: STUDENT PHONE + OPTIONAL WIZARD-OF-OZ INBOX    -->
+    <!-- ========================================================== -->
+    <div id="workspace-chat" class="w-full max-w-5xl flex flex-col lg:flex-row items-center justify-center gap-6 transition-all">
+
+      <!-- LEFT / CENTER: STUDENT MOBILE WEB CHAT -->
+      <section id="view-phone" class="w-full max-w-[420px] h-[82vh] min-h-[580px] max-h-[800px] bg-honeydew rounded-[2.4rem] border-[6px] border-warmWhite shadow-soft flex flex-col overflow-hidden relative transition-all duration-300">
+        
+        <!-- Top Bar inside Mobile Frame -->
+        <div class="px-5 pt-4 pb-3 bg-honeydew/95 backdrop-blur-md border-b border-espresso/10 flex items-center justify-between z-10 shrink-0">
+          <!-- Left: Campus Badge (Landing) or Back/Reset (Active Chat) -->
+          <div id="header-left-landing" class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-leafGreen"></span>
+            <span class="text-xs font-semibold text-espressoLight tracking-wide">Mumbai Campus · 18+ Peer Space</span>
+          </div>
+
+          <div id="header-left-chat" class="hidden flex items-center gap-2.5">
+            <button onclick="resetSession()" title="Start a fresh anonymous chat" class="px-2.5 py-1.5 rounded-full bg-warmWhite hover:bg-softPeach/60 flex items-center gap-1 text-xs font-semibold text-espresso transition-colors border border-espresso/10">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              <span>New Chat</span>
+            </button>
+            <div>
+              <h2 class="font-display font-bold text-sm text-espresso leading-tight">Campus Peer</h2>
+              <div class="flex items-center gap-1.5 mt-0.5">
+                <span class="w-2 h-2 rounded-full bg-leafGreen"></span>
+                <span class="text-[11px] font-medium text-espressoLight">Human, not AI</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Discreet Urgent Help / Safety Route Button -->
+          <button onclick="toggleSafetyModal(true)" class="px-3 py-1.5 rounded-full bg-tomatoJam/10 hover:bg-tomatoJam/15 text-tomatoJam text-xs font-bold transition-colors flex items-center gap-1.5 border border-tomatoJam/20">
+            <span class="w-1.5 h-1.5 rounded-full bg-tomatoJam"></span>
+            <span>Urgent help</span>
+          </button>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- SCREEN A: QR SCAN LANDING / ENTRY SCREEN   -->
+        <!-- ========================================== -->
+        <div id="screen-landing" class="flex-1 overflow-y-auto chat-scroll px-5 py-4 flex flex-col justify-between">
+          
+          <!-- Top Hero: Signature Chat Bubble Visual -->
+          <div class="text-center mt-1">
+            <div class="inline-flex flex-col items-center">
+              <div class="relative bg-warmWhite border-2 border-espresso/15 rounded-[2rem] rounded-bl-md px-7 py-4 shadow-card mb-2.5">
+                <div class="flex items-center justify-center gap-2.5 mb-1.5">
+                  <span class="w-3.5 h-3.5 rounded-full bg-coralGlow dot-1"></span>
+                  <span class="w-3.5 h-3.5 rounded-full bg-softPeach dot-2"></span>
+                  <span class="w-3.5 h-3.5 rounded-full bg-skyBlue dot-3"></span>
+                </div>
+                <h1 class="font-display font-bold text-2xl sm:text-[26px] text-espresso tracking-tight">
+                  Human Typing…
+                </h1>
+              </div>
+            </div>
+
+            <p class="text-sm font-medium text-espresso leading-snug max-w-[310px] mx-auto mt-1">
+              Not an AI. A trained student volunteer from your campus. <span class="underline decoration-coralGlow decoration-2 underline-offset-2">Replies in a few minutes.</span>
+            </p>
+
+            <!-- Core Insight Pill -->
+            <div class="mt-3 inline-block px-3.5 py-1.5 rounded-2xl bg-softPeach/55 border border-softPeach text-espresso text-xs font-semibold">
+              “Instant is easy. Real takes a moment, and it is worth it.”
+            </div>
+          </div>
+
+          <!-- Middle: Live Anonymous Message Box & Starter Pills -->
+          <form onsubmit="handleLandingSubmit(event)" class="my-3.5 bg-warmWhite rounded-3xl p-4 border border-espresso/10 shadow-card">
+            <div class="flex items-center justify-between mb-2">
+              <label for="landing-input" class="text-[11px] font-bold uppercase tracking-wider text-espressoLight">
+                No name · No login · Type below
+              </label>
+              <span class="text-[11px] font-semibold text-espresso bg-skyBlue/25 px-2.5 py-0.5 rounded-full">100% Anonymous</span>
+            </div>
+
+            <textarea
+              id="landing-input"
+              rows="2"
+              onkeydown="handleLandingEnter(event)"
+              placeholder="Write anything, from a small worry to 'nothing, just bored'…"
+              class="w-full rounded-2xl bg-honeydew/75 border border-espresso/15 focus:border-skyBlue focus:ring-2 focus:ring-skyBlue/30 focus:outline-none p-3 text-sm text-espresso placeholder:text-espressoLight/65 resize-none transition-all"
+            ></textarea>
+
+            <!-- Quick Starter Pills -->
+            <div class="mt-2.5">
+              <p class="text-[11px] font-medium text-espressoLight mb-1.5">Or tap a starter &amp; send right away:</p>
+              <div class="flex flex-wrap gap-1.5">
+                <button type="button" onclick="sendStarterDirectly('Nothing, just bored between lectures')" class="text-left text-xs px-3 py-1.5 rounded-full bg-softPeach/50 hover:bg-softPeach text-espresso font-medium transition-colors border border-softPeach">
+                  Nothing, just bored between lectures
+                </button>
+                <button type="button" onclick="sendStarterDirectly('Overwhelmed with submissions and exams')" class="text-left text-xs px-3 py-1.5 rounded-full bg-skyBlue/20 hover:bg-skyBlue/35 text-espresso font-medium transition-colors border border-skyBlue/30">
+                  Overwhelmed with submissions
+                </button>
+                <button type="button" onclick="sendStarterDirectly('Feeling a bit out of place lately')" class="text-left text-xs px-3 py-1.5 rounded-full bg-coralGlow/20 hover:bg-coralGlow/35 text-espresso font-medium transition-colors border border-coralGlow/30">
+                  Feeling a bit out of place lately
+                </button>
+                <button type="button" onclick="sendStarterDirectly('Just wanted a real person to talk to')" class="text-left text-xs px-3 py-1.5 rounded-full bg-honeydew hover:bg-softPeach/50 text-espresso font-medium transition-colors border border-espresso/15">
+                  Just wanted a real person to talk to
+                </button>
+              </div>
+            </div>
+
+            <!-- Primary CTA -->
+            <button
+              type="submit"
+              class="mt-3.5 w-full py-3 px-5 rounded-2xl bg-coralGlow hover:bg-[#f27649] active:scale-[0.99] text-warmWhite font-bold text-sm sm:text-base shadow-md transition-all flex items-center justify-center gap-2"
+            >
+              <span>Send &amp; Start Chat</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </button>
+          </form>
+
+          <!-- Bottom Privacy Note -->
+          <p class="text-[11px] text-center text-espressoLight leading-relaxed px-2">
+            Chats are private, moderated for safety, and deleted after your session. Not therapy—just a fellow student who gets it.
+          </p>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- SCREEN B: ACTIVE PEER CHAT INTERFACE       -->
+        <!-- ========================================== -->
+        <div id="screen-chat" class="hidden flex-1 flex flex-col overflow-hidden">
+          
+          <!-- Subtle Pace & Demo Controls Strip -->
+          <div class="px-4 py-2 bg-skyBlue/15 border-b border-skyBlue/25 flex items-center justify-between text-[11px] text-espresso shrink-0">
+            <span id="pace-strip-label" class="font-medium truncate">⏳ Human pace: real replies take a moment.</span>
+            <button type="button" onclick="triggerOpenTableInvite()" class="underline font-bold text-espressoLight hover:text-espresso ml-2 shrink-0">
+              Show 4pm invite
+            </button>
+          </div>
+
+          <!-- Scrollable Messages Container -->
+          <div id="chat-messages" class="flex-1 overflow-y-auto chat-scroll px-4 py-4 space-y-3.5">
+            <!-- Populated dynamically -->
+          </div>
+
+          <!-- Human Delay / Reading / Typing Banner -->
+          <div id="human-wait-banner" class="hidden mx-3.5 mb-2 px-3.5 py-2.5 rounded-2xl bg-warmWhite border border-coralGlow/40 shadow-sm transition-all">
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2.5">
+                <div class="flex items-center gap-1 px-2 py-1 rounded-full bg-softPeach/65 shrink-0">
+                  <span class="w-1.5 h-1.5 rounded-full bg-coralGlow dot-1"></span>
+                  <span class="w-1.5 h-1.5 rounded-full bg-espresso dot-2"></span>
+                  <span class="w-1.5 h-1.5 rounded-full bg-skyBlue dot-3"></span>
+                </div>
+                <div>
+                  <p id="wait-status-title" class="text-xs font-bold text-espresso">A trained student volunteer is reading your note…</p>
+                  <p id="wait-status-sub" class="text-[11px] text-espressoLight">Instant is easy. Real takes a moment.</p>
+                </div>
+              </div>
+              <button id="skip-wait-btn" type="button" onclick="skipWaitDemo()" class="text-[11px] font-bold text-coralGlow hover:underline shrink-0 px-2.5 py-1 rounded-lg bg-coralGlow/10">
+                Skip wait
+              </button>
+            </div>
+          </div>
+
+          <!-- Bottom Message Input Bar (Always unlocked so user can send real messages anytime!) -->
+          <form id="chat-form" onsubmit="handleStudentChatSubmit(event)" class="p-3 bg-warmWhite border-t border-espresso/10 flex items-end gap-2 shrink-0">
+            <textarea
+              id="chat-input"
+              rows="1"
+              oninput="autoResizeTextarea(this)"
+              onkeydown="handleStudentEnter(event)"
+              placeholder="Type a message…"
+              class="flex-1 max-h-28 rounded-2xl bg-honeydew/85 border border-espresso/15 focus:border-skyBlue focus:ring-2 focus:ring-skyBlue/30 focus:outline-none px-3.5 py-2.5 text-sm text-espresso placeholder:text-espressoLight/60 resize-none"
+            ></textarea>
+            <button
+              type="submit"
+              id="chat-send-btn"
+              class="h-10 px-4 rounded-2xl bg-coralGlow hover:bg-[#f27649] active:scale-[0.98] text-warmWhite font-bold text-sm shadow-sm transition-all flex items-center justify-center shrink-0"
+            >
+              Send
+            </button>
+          </form>
+        </div>
+
+      </section>
+
+      <!-- ========================================================== -->
+      <!-- RIGHT PANEL (WIZARD-OF-OZ MODE): VOLUNTEER SHARED INBOX    -->
+      <!-- ========================================================== -->
+      <section id="view-woz-volunteer" class="hidden w-full max-w-[440px] h-[82vh] min-h-[580px] max-h-[800px] bg-warmWhite rounded-[2.4rem] border-[6px] border-skyBlue/40 shadow-soft flex flex-col overflow-hidden relative">
+        
+        <!-- Volunteer Header -->
+        <div class="px-5 pt-4 pb-3 bg-skyBlue/15 border-b border-skyBlue/25 flex items-center justify-between shrink-0">
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-2xl bg-skyBlue text-warmWhite font-display font-bold flex items-center justify-center text-sm shadow-xs">
+              V
+            </div>
+            <div>
+              <div class="flex items-center gap-1.5">
+                <h2 class="font-display font-bold text-sm text-espresso">Peer Volunteer Inbox</h2>
+                <span class="px-2 py-0.5 rounded-full bg-leafGreen/15 text-leafGreen text-[10px] font-bold">LIVE</span>
+              </div>
+              <p class="text-[11px] text-espressoLight">Wizard-of-Oz Demo · Reply directly as the peer</p>
+            </div>
+          </div>
+
+          <button type="button" onclick="triggerOpenTableInvite()" class="px-3 py-1.5 rounded-full bg-softPeach hover:bg-softPeach/80 text-espresso text-xs font-bold transition-colors border border-coralGlow/30">
+            + Send 4pm Invite
+          </button>
+        </div>
+
+        <!-- Protocol Reminder Strip -->
+        <div class="px-4 py-2 bg-honeydew border-b border-espresso/10 text-[11px] text-espressoLight flex items-center justify-between shrink-0">
+          <span>💡 <strong>Protocol:</strong> Warm, unhurried, no unsolicited advice.</span>
+          <span id="woz-sync-status" class="font-semibold text-skyBlue">Synced</span>
+        </div>
+
+        <!-- Mirrored Conversation Feed (Volunteer Perspective) -->
+        <div id="woz-messages" class="flex-1 overflow-y-auto chat-scroll px-4 py-4 space-y-3 bg-honeydew/35">
+          <div class="bg-warmWhite border border-espresso/10 rounded-2xl p-3.5 text-xs text-espressoLight leading-relaxed">
+            <p class="font-bold text-espresso mb-1">Waiting for a student to scan &amp; message…</p>
+            Type a message in the <strong>Student Phone</strong> on the left—it will appear here immediately so you can type and send a real reply back!
+          </div>
+        </div>
+
+        <!-- Quick Volunteer Protocol Chips -->
+        <div class="px-3.5 pt-2 pb-1.5 bg-warmWhite border-t border-espresso/10 shrink-0">
+          <p class="text-[10px] font-bold uppercase tracking-wider text-espressoLight mb-1.5">Quick Volunteer Prompts:</p>
+          <div class="flex gap-1.5 overflow-x-auto pb-1 chat-scroll">
+            <button type="button" onclick="fillVolunteerPrompt('Hey! Glad you scanned the sticker. No rush at all—how is your day going so far?')" class="shrink-0 text-[11px] px-2.5 py-1 rounded-full bg-honeydew hover:bg-softPeach/50 text-espresso font-medium border border-espresso/15">
+              Warm hello
+            </button>
+            <button type="button" onclick="fillVolunteerPrompt('That makes total sense. Campus can feel weirdly isolating even when it’s crowded. I’m listening if you want to vent.')" class="shrink-0 text-[11px] px-2.5 py-1 rounded-full bg-honeydew hover:bg-softPeach/50 text-espresso font-medium border border-espresso/15">
+              Validate &amp; listen
+            </button>
+            <button type="button" onclick="triggerOpenTableInvite()" class="shrink-0 text-[11px] px-2.5 py-1 rounded-full bg-softPeach/60 hover:bg-softPeach text-espresso font-semibold border border-coralGlow/30">
+              Offer 4pm Open Table
+            </button>
+          </div>
+        </div>
+
+        <!-- Volunteer Reply Input Bar -->
+        <form onsubmit="handleVolunteerReplySubmit(event)" class="p-3 bg-warmWhite flex items-end gap-2 shrink-0">
+          <textarea
+            id="woz-input"
+            rows="2"
+            oninput="handleVolunteerTypingSignal(this)"
+            onkeydown="handleVolunteerEnter(event)"
+            placeholder="Write a real reply as the student volunteer…"
+            class="flex-1 max-h-28 rounded-2xl bg-skyBlue/10 border border-skyBlue/35 focus:border-skyBlue focus:ring-2 focus:ring-skyBlue/30 focus:outline-none px-3.5 py-2.5 text-sm text-espresso placeholder:text-espressoLight/65 resize-none"
+          ></textarea>
+          <button
+            type="submit"
+            class="h-10 px-4 rounded-2xl bg-espresso hover:bg-espresso/90 active:scale-[0.98] text-honeydew font-bold text-sm shadow-sm transition-all shrink-0"
+          >
+            Reply
+          </button>
+        </form>
+      </section>
+
+    </div>
+
+    <!-- ========================================================== -->
+    <!-- VIEW 3: PHYSICAL CAMPUS STICKER & CANTEEN TABLE CARD       -->
+    <!-- ========================================================== -->
+    <section id="view-sticker" class="hidden w-full max-w-2xl px-2 py-4 flex flex-col items-center">
+      <div class="text-center mb-6 max-w-md">
+        <span class="inline-block px-3 py-1 rounded-full bg-softPeach text-espresso text-xs font-bold mb-2">
+          Street Furniture as an Interface
+        </span>
+        <h2 class="font-display font-bold text-xl sm:text-2xl text-espresso">
+          Placed on campus benches, canteen tables &amp; station pillars
+        </h2>
+        <p class="text-xs sm:text-sm text-espressoLight mt-1">
+          Copies the visual language of AI chat bubbles, but tells students plainly that a real peer is behind it.
+        </p>
+      </div>
+
+      <!-- Two Physical Artifacts Side-by-Side -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full items-center">
+        
+        <!-- Artifact 1: The Bench / Table QR Sticker -->
+        <div class="bg-warmWhite rounded-[2.2rem] rounded-bl-md p-6 border-2 border-espresso/15 shadow-sticker relative">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-honeydew border border-espresso/10">
+              <span class="w-2.5 h-2.5 rounded-full bg-coralGlow dot-1"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-softPeach dot-2"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-skyBlue dot-3"></span>
+            </div>
+            <span class="text-[11px] font-bold uppercase tracking-wider text-espressoLight">Canteen Sticker</span>
+          </div>
+
+          <h3 class="font-display font-bold text-2xl text-espresso tracking-tight mb-2">
+            Human typing…
+          </h3>
+          <p class="text-sm font-medium text-espresso leading-snug mb-4">
+            Not an AI. A trained student volunteer from your campus. Replies in a few minutes.
+          </p>
+
+          <!-- Simulated Scannable QR Code -->
+          <div class="bg-honeydew rounded-2xl p-3.5 border border-espresso/10 flex items-center gap-3.5">
+            <div class="w-16 h-16 bg-warmWhite p-1.5 rounded-xl border border-espresso/15 shrink-0 flex items-center justify-center">
+              <svg viewBox="0 0 36 36" class="w-full h-full text-espresso" fill="currentColor">
+                <path d="M2 2h10v10H2V2zm2 2v6h6V4H4zm2 2h2v2H6V6zm18-4h10v10H24V2zm2 2v6h6V4h-6zm2 2h2v2h-2V6zM2 24h10v10H2V24zm2 2v6h6v-6H4zm2 2h2v2H6v-2zm10-24h2v4h-2V4zm4 2h2v4h-2V6zm-4 6h4v2h-4v-2zm-2 4h6v2h-6v-2zm8-2h2v6h-2v-6zm4 2h4v2h-4v-2zM2 15h4v2H2v-2zm6 0h4v4H8v-4zm6 3h4v4h-4v-4zm-6 3h4v2H8v-2zm12 2h4v2h-4v-2zm6-2h2v4h-2v-4zm4 2h4v4h-4v-4zm-10 4h4v4h-4v-4zm6 4h4v3h-4v-3zm-12 0h4v3h-4v-3z"/>
+              </svg>
+            </div>
+            <div>
+              <p class="text-xs font-bold text-espresso">Scan to message anonymously</p>
+              <p class="text-[11px] text-espressoLight mt-0.5">No app. No name. Opens right in your browser.</p>
+              <button onclick="switchView('phone')" class="mt-1.5 text-xs font-bold text-coralGlow hover:underline">
+                Simulate scan →
+              </button>
+            </div>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-espresso/10 text-center">
+            <span class="text-xs font-semibold text-espressoLight italic">
+              “Instant is easy. Real takes a moment, and it is worth it.”
+            </span>
+          </div>
+        </div>
+
+        <!-- Artifact 2: The 4 PM Canteen Open Table Tent Card -->
+        <div class="bg-softPeach/70 rounded-[2.2rem] p-6 border-2 border-coralGlow/40 shadow-sticker flex flex-col justify-between">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-warmWhite text-espresso text-xs font-bold mb-4 shadow-sm">
+              <span class="w-3 h-3 rounded-full bg-leafGreen green-dot-pulse"></span>
+              <span>Open Table · 4:00 PM Daily</span>
+            </div>
+
+            <h3 class="font-display font-bold text-xl text-espresso leading-snug mb-2">
+              Marked with a green dot.
+            </h3>
+            <p class="text-sm text-espresso/90 leading-relaxed mb-4">
+              Come sit with a chai or your headphones on. It’s a shared group table—you don’t have to talk, introduce yourself, or explain anything.
+            </p>
+          </div>
+
+          <div class="bg-warmWhite/90 rounded-2xl p-3.5 border border-espresso/10 space-y-2 text-xs text-espresso">
+            <div class="flex items-center gap-2">
+              <span class="text-leafGreen font-bold">✓</span>
+              <span>Group canteen table, never 1-on-1 pressure</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-leafGreen font-bold">✓</span>
+              <span>Stay for 2 minutes or 40 minutes</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-leafGreen font-bold">✓</span>
+              <span>Hosted by trained campus volunteers</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ======================================================== -->
+  <!-- SAFETY & HELPLINE MODAL (Mumbai / India Student Support) -->
+  <!-- ======================================================== -->
+  <div id="safety-modal" class="hidden fixed inset-0 z-50 bg-espresso/45 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-warmWhite rounded-3xl max-w-md w-full p-6 border-2 border-tomatoJam/25 shadow-2xl msg-enter">
+      <div class="flex items-start justify-between gap-3 mb-3">
+        <div class="flex items-center gap-2.5">
+          <span class="w-8 h-8 rounded-2xl bg-tomatoJam/15 text-tomatoJam flex items-center justify-center font-bold">
+            ♥
+          </span>
+          <div>
+            <h3 class="font-display font-extrabold text-lg text-espresso">Free, Confidential Support</h3>
+            <p class="text-xs text-espressoLight">Peer chat is not therapy or crisis care.</p>
+          </div>
+        </div>
+        <button onclick="toggleSafetyModal(false)" class="w-8 h-8 rounded-full bg-honeydew hover:bg-softPeach/60 flex items-center justify-center text-espresso font-bold">
+          ✕
+        </button>
+      </div>
+
+      <p class="text-xs sm:text-sm text-espresso/90 leading-relaxed mb-4">
+        Our student volunteers are trained peers here for everyday loneliness and stress. If you are feeling overwhelmed, unsafe, or in distress, please reach out to trained counsellors right away:
+      </p>
+
+      <div class="space-y-2.5 mb-5">
+        <!-- iCall (TISS Mumbai) -->
+        <div class="p-3.5 rounded-2xl bg-honeydew border border-espresso/10">
+          <div class="flex items-center justify-between">
+            <span class="font-display font-bold text-sm text-espresso">iCall (TISS Mumbai)</span>
+            <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-skyBlue/25 text-espresso">Mon–Sat · 10am–8pm</span>
+          </div>
+          <p class="text-xs text-espressoLight mt-0.5">Free telephone &amp; email counselling by trained professionals.</p>
+          <a href="tel:9152987821" class="inline-block mt-1.5 text-sm font-extrabold text-tomatoJam hover:underline">
+            Call 9152987821
+          </a>
+        </div>
+
+        <!-- Vandrevala Foundation -->
+        <div class="p-3.5 rounded-2xl bg-honeydew border border-espresso/10">
+          <div class="flex items-center justify-between">
+            <span class="font-display font-bold text-sm text-espresso">Vandrevala Foundation</span>
+            <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-softPeach text-espresso">24/7 Helpline</span>
+          </div>
+          <p class="text-xs text-espressoLight mt-0.5">24-hour free emotional support across India (Call or WhatsApp).</p>
+          <a href="tel:+919999666555" class="inline-block mt-1.5 text-sm font-extrabold text-tomatoJam hover:underline">
+            Call / WhatsApp +91 9999 666 555
+          </a>
+        </div>
+
+        <!-- AASRA (Navi Mumbai / Mumbai) -->
+        <div class="p-3.5 rounded-2xl bg-honeydew border border-espresso/10">
+          <div class="flex items-center justify-between">
+            <span class="font-display font-bold text-sm text-espresso">AASRA (Mumbai)</span>
+            <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-softPeach text-espresso">24/7 Crisis Line</span>
+          </div>
+          <a href="tel:+919820466726" class="inline-block mt-1 text-sm font-extrabold text-tomatoJam hover:underline">
+            Call +91 9820466726
+          </a>
+        </div>
+      </div>
+
+      <button onclick="toggleSafetyModal(false)" class="w-full py-3 rounded-2xl bg-espresso text-honeydew font-display font-bold text-sm hover:opacity-95 transition-opacity">
+        Return to Human Typing…
+      </button>
+    </div>
+  </div>
+
+  <!-- Subtle Footer Note -->
+  <footer class="text-center text-[11px] text-espressoLight mt-2 px-4">
+    Designed for Mumbai University Campuses · Human Typing… Prototype
+  </footer>
+
+  <!-- ========================================== -->
+  <!-- INTERACTIVE PROTOTYPE LOGIC                -->
+  <!-- ========================================== -->
+  <script>
+    // Application State
+    const state = {
+      mode: 'phone', // 'phone' (auto-peer) | 'woz' (manual live volunteer) | 'sticker'
+      messages: [], // { sender: 'student' | 'volunteer' | 'open_table' | 'safety', text: string, time: string }
+      userTurnCount: 0,
+      isWaitingForHuman: false,
+      waitTimeoutReading: null,
+      waitTimeoutReply: null,
+      pendingAutoReply: null,
+      openTableOffered: false,
+      rsvpConfirmed: false,
+      usedReplies: new Set(),
+      topicContext: 'general'
+    };
+
+    // Switch between Student Mobile View, Split Wizard-of-Oz Demo, and Physical Sticker View
+    function switchView(newMode) {
+      state.mode = newMode;
+
+      const workspaceChat = document.getElementById('workspace-chat');
+      const wozVolunteer = document.getElementById('view-woz-volunteer');
+      const stickerView = document.getElementById('view-sticker');
+
+      const tabPhone = document.getElementById('tab-phone');
+      const tabWoz = document.getElementById('tab-woz');
+      const tabSticker = document.getElementById('tab-sticker');
+
+      const activeBtnClass = 'px-3.5 py-1.5 rounded-xl sm:rounded-full text-xs sm:text-sm font-semibold transition-all bg-espresso text-honeydew shadow-sm flex items-center gap-1.5';
+      const inactiveBtnClass = 'px-3.5 py-1.5 rounded-xl sm:rounded-full text-xs sm:text-sm font-semibold transition-all text-espressoLight hover:text-espresso flex items-center gap-1.5';
+
+      tabPhone.className = newMode === 'phone' ? activeBtnClass : inactiveBtnClass;
+      tabWoz.className = newMode === 'woz' ? activeBtnClass : inactiveBtnClass;
+      tabSticker.className = newMode === 'sticker' ? activeBtnClass : inactiveBtnClass;
+
+      if (newMode === 'sticker') {
+        workspaceChat.classList.add('hidden');
+        stickerView.classList.remove('hidden');
+      } else {
+        stickerView.classList.add('hidden');
+        workspaceChat.classList.remove('hidden');
+
+        if (newMode === 'woz') {
+          wozVolunteer.classList.remove('hidden');
+          document.getElementById('pace-strip-label').textContent = 'Live Wizard-of-Oz mode: reply from the right panel.';
+          document.getElementById('skip-wait-btn').classList.add('hidden');
+          // Cancel auto-timer if switching into manual Wizard-of-Oz mode mid-wait
+          clearTimers();
+          if (state.isWaitingForHuman) {
+            document.getElementById('wait-status-title').textContent = 'A peer volunteer is reading your message…';
+            document.getElementById('wait-status-sub').textContent = 'Type a reply in the Volunteer Inbox on the right.';
+          }
+        } else {
+          wozVolunteer.classList.add('hidden');
+          document.getElementById('pace-strip-label').textContent = '⏳ Human pace: real replies take a moment.';
+          document.getElementById('skip-wait-btn').classList.remove('hidden');
+          // If waiting in WoZ mode and switched back to single phone mode, trigger auto-reply
+          if (state.isWaitingForHuman && state.messages.length > 0) {
+            const lastStudentMsg = [...state.messages].reverse().find(m => m.sender === 'student');
+            if (lastStudentMsg) {
+              scheduleAutoPeerReply(lastStudentMsg.text);
+            }
+          }
+        }
+      }
+      renderAllMessages();
+    }
+
+    // Safety Helpline Modal Toggle
+    function toggleSafetyModal(show) {
+      const modal = document.getElementById('safety-modal');
+      if (show) {
+        modal.classList.remove('hidden');
+      } else {
+        modal.classList.add('hidden');
+      }
+    }
+
+    // Auto-grow textarea height as user types
+    function autoResizeTextarea(el) {
+      el.style.height = 'auto';
+      el.style.height = Math.min(el.scrollHeight, 112) + 'px';
+    }
+
+    // Landing Screen Handlers
+    function handleLandingEnter(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        handleLandingSubmit(e);
+      }
+    }
+
+    function handleLandingSubmit(e) {
+      e.preventDefault();
+      const input = document.getElementById('landing-input');
+      const text = input.value.trim();
+      if (!text) {
+        input.focus();
+        input.placeholder = "Type a quick hello or tap one of the starters below…";
+        return;
+      }
+      input.value = '';
+      enterChatWithMessage(text);
+    }
+
+    function sendStarterDirectly(starterText) {
+      enterChatWithMessage(starterText);
+    }
+
+    function enterChatWithMessage(text) {
+      document.getElementById('screen-landing').classList.add('hidden');
+      document.getElementById('screen-chat').classList.remove('hidden');
+      document.getElementById('header-left-landing').classList.add('hidden');
+      document.getElementById('header-left-chat').classList.remove('hidden');
+
+      sendStudentMessage(text);
+    }
+
+    // Reset back to QR Landing Screen for fresh testing
+    function resetSession() {
+      clearTimers();
+      state.messages = [];
+      state.userTurnCount = 0;
+      state.isWaitingForHuman = false;
+      state.pendingAutoReply = null;
+      state.openTableOffered = false;
+      state.rsvpConfirmed = false;
+      state.usedReplies.clear();
+      state.topicContext = 'general';
+
+      document.getElementById('human-wait-banner').classList.add('hidden');
+      document.getElementById('landing-input').value = '';
+      document.getElementById('chat-input').value = '';
+      document.getElementById('woz-input').value = '';
+
+      document.getElementById('screen-chat').classList.add('hidden');
+      document.getElementById('screen-landing').classList.remove('hidden');
+      document.getElementById('header-left-chat').classList.add('hidden');
+      document.getElementById('header-left-landing').classList.remove('hidden');
+
+      renderAllMessages();
+    }
+
+    // Student Chat Input Handlers
+    function handleStudentEnter(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        handleStudentChatSubmit(e);
+      }
+    }
+
+    function handleStudentChatSubmit(e) {
+      e.preventDefault();
+      const input = document.getElementById('chat-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      input.value = '';
+      input.style.height = 'auto';
+      sendStudentMessage(text);
+    }
+
+    // Core Student Message Pipeline
+    function sendStudentMessage(text) {
+      state.userTurnCount += 1;
+      state.messages.push({
+        sender: 'student',
+        text: text,
+        time: getCurrentTime()
+      });
+
+      // Check for crisis/distress keywords
+      if (containsCrisisKeywords(text)) {
+        state.messages.push({
+          sender: 'safety',
+          text: '',
+          time: getCurrentTime()
+        });
+      }
+
+      renderAllMessages();
+
+      // Show "Human reading / typing" indicator on student screen
+      showHumanWaitBanner(
+        "A trained student volunteer is reading your note…",
+        state.mode === 'woz' ? "Reply in the Volunteer Inbox on the right." : "Instant is easy. Real takes a moment."
+      );
+
+      // In standard Mobile Chat mode, trigger the smart empathetic auto-peer responder
+      if (state.mode === 'phone') {
+        scheduleAutoPeerReply(text);
+      }
+    }
+
+    // Volunteer Manual Reply Handlers (Wizard-of-Oz Mode)
+    function handleVolunteerTypingSignal(el) {
+      autoResizeTextarea(el);
+      if (el.value.trim().length > 0) {
+        showHumanWaitBanner(
+          "Human is typing…",
+          "A trained student volunteer from your campus is writing back."
+        );
+      }
+    }
+
+    function handleVolunteerEnter(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        handleVolunteerReplySubmit(e);
+      }
+    }
+
+    function fillVolunteerPrompt(promptText) {
+      const wozInput = document.getElementById('woz-input');
+      wozInput.value = promptText;
+      autoResizeTextarea(wozInput);
+      wozInput.focus();
+      showHumanWaitBanner(
+        "Human is typing…",
+        "A trained student volunteer from your campus is writing back."
+      );
+    }
+
+    function handleVolunteerReplySubmit(e) {
+      e.preventDefault();
+      const wozInput = document.getElementById('woz-input');
+      const text = wozInput.value.trim();
+      if (!text) return;
+
+      wozInput.value = '';
+      wozInput.style.height = 'auto';
+
+      // Ensure student view is visible if volunteer replies directly
+      if (!document.getElementById('screen-landing').classList.contains('hidden')) {
+        document.getElementById('screen-landing').classList.add('hidden');
+        document.getElementById('screen-chat').classList.remove('hidden');
+        document.getElementById('header-left-landing').classList.add('hidden');
+        document.getElementById('header-left-chat').classList.remove('hidden');
+      }
+
+      deliverVolunteerMessage(text);
+    }
+
+    function deliverVolunteerMessage(text) {
+      clearTimers();
+      state.isWaitingForHuman = false;
+      document.getElementById('human-wait-banner').classList.add('hidden');
+
+      state.messages.push({
+        sender: 'volunteer',
+        text: text,
+        time: getCurrentTime()
+      });
+
+      renderAllMessages();
+    }
+
+    // Human Delay & Auto-Peer Engine (for testing solo in Mobile Chat view)
+    function scheduleAutoPeerReply(studentText) {
+      clearTimers();
+      const replyText = generateContextAwarePeerReply(studentText, state.userTurnCount);
+      const shouldOfferTable = (state.userTurnCount >= 2 && !state.openTableOffered);
+
+      state.pendingAutoReply = () => {
+        deliverVolunteerMessage(replyText);
+        if (shouldOfferTable) {
+          state.openTableOffered = true;
+          setTimeout(() => {
+            state.messages.push({
+              sender: 'open_table',
+              text: '',
+              time: getCurrentTime()
+            });
+            renderAllMessages();
+          }, 750);
+        }
+      };
+
+      // Stage 1 -> Stage 2 transition ("Reading" -> "Human is typing...")
+      state.waitTimeoutReading = setTimeout(() => {
+        if (state.isWaitingForHuman && state.mode === 'phone') {
+          showHumanWaitBanner(
+            "Human is typing…",
+            "A peer volunteer from your campus is writing back."
+          );
+        }
+      }, 1600);
+
+      // Stage 2 -> Deliver reply (~3.6 seconds total)
+      state.waitTimeoutReply = setTimeout(() => {
+        if (state.mode === 'phone' && typeof state.pendingAutoReply === 'function') {
+          const fn = state.pendingAutoReply;
+          state.pendingAutoReply = null;
+          fn();
+        }
+      }, 3600);
+    }
+
+    function skipWaitDemo() {
+      if (typeof state.pendingAutoReply === 'function') {
+        const fn = state.pendingAutoReply;
+        state.pendingAutoReply = null;
+        fn();
+      }
+    }
+
+    function showHumanWaitBanner(title, sub) {
+      state.isWaitingForHuman = true;
+      const banner = document.getElementById('human-wait-banner');
+      document.getElementById('wait-status-title').textContent = title;
+      document.getElementById('wait-status-sub').textContent = sub;
+      banner.classList.remove('hidden');
+      scrollChatContainers();
+    }
+
+    function clearTimers() {
+      if (state.waitTimeoutReading) clearTimeout(state.waitTimeoutReading);
+      if (state.waitTimeoutReply) clearTimeout(state.waitTimeoutReply);
+    }
+
+    // Trigger the 4 PM Open Table Card manually or automatically
+    function triggerOpenTableInvite() {
+      // If still on landing screen, move into chat first
+      if (!document.getElementById('screen-landing').classList.contains('hidden')) {
+        document.getElementById('screen-landing').classList.add('hidden');
+        document.getElementById('screen-chat').classList.remove('hidden');
+        document.getElementById('header-left-landing').classList.add('hidden');
+        document.getElementById('header-left-chat').classList.remove('hidden');
+      }
+
+      if (!state.openTableOffered) {
+        state.openTableOffered = true;
+        state.messages.push({
+          sender: 'open_table',
+          text: '',
+          time: getCurrentTime()
+        });
+        renderAllMessages();
+      } else {
+        scrollChatContainers();
+      }
+    }
+
+    function confirmOpenTableRSVP() {
+      state.rsvpConfirmed = true;
+      renderAllMessages();
+    }
+
+    // Smart Context-Aware Peer Responder (Mumbai University Student Voice)
+    function generateContextAwarePeerReply(text, turn) {
+      const lower = text.toLowerCase();
+
+      // Detect emotional/contextual themes
+      const isBored = /\b(bored|nothing|waiting|pass time|free period|gap)\b/.test(lower);
+      const isAcademic = /\b(exam|submission|assignment|deadline|viva|placement|internship|study|grades|attendance|kt|professor)\b/.test(lower);
+      const isLonely = /\b(lonely|alone|out of place|disconnect|left out|no friends|new here|homesick|hostel|pg)\b/.test(lower);
+      const isCommuteOrMumbai = /\b(train|local|virar|borivali|dadar|churchgate|bandra|andheri|rain|monsoon|traffic|commute|rickshaw)\b/.test(lower);
+      const isAI = /\b(chatgpt|ai|bot|chatbot|character|claude|gemini)\b/.test(lower);
+      const isGreeting = /^(hi|hey|hello|yo|hii+|heyy+|namaste|sup)\b/.test(lower) && text.length < 25;
+
+      const pickUnique = (candidates) => {
+        for (const c of candidates) {
+          if (!state.usedReplies.has(c)) {
+            state.usedReplies.add(c);
+            return c;
+          }
+        }
+        return candidates[turn % candidates.length];
+      };
+
+      if (isGreeting && turn === 1) {
+        return pickUnique([
+          "Hey! Glad you scanned the sticker—it’s nice having an actual human on the other end for once. I’m a third-year student here on campus. How’s your day treating you?",
+          "Hey there! Thanks for saying hi. No rush or pressure here—just hanging out between classes. What’s on your mind today?"
+        ]);
+      }
+
+      if (isCommuteOrMumbai) {
+        return pickUnique([
+          "Ugh, the Mumbai commute alone drains half your social battery before you even reach campus. Grab a breath—are you stuck waiting around college right now or heading back soon?",
+          "Honestly, surviving local trains and campus crowds in the same day is an extreme sport. Glad you paused for a minute here."
+        ]);
+      }
+
+      if (isAI) {
+        return pickUnique([
+          "That’s literally why we put these stickers up. Chatbots answer in half a second, which feels easy at 2 am, but it’s weirdly hollow after a while. Even if I type a bit slower, there’s a real person here listening.",
+          "Right? AI never gets tired, so it’s tempting—but it also doesn’t actually know what sitting in a noisy college canteen feels like. Thanks for giving a real peer a shot today."
+        ]);
+      }
+
+      if (isAcademic) {
+        state.topicContext = 'academic';
+        return pickUnique([
+          "Submissions and deadlines here pile up out of nowhere, and everyone walks around acting like they have it completely under control (spoiler: nobody does). Do you want to vent about what’s due, or just take a 5-minute break from thinking about it?",
+          "That sounds genuinely exhausting. When everything is due at once, it’s easy to isolate yourself trying to catch up. Take it one hour at a time—you’re doing better than you think."
+        ]);
+      }
+
+      if (isLonely) {
+        state.topicContext = 'lonely';
+        return pickUnique([
+          "Thank you for saying that out loud. Being surrounded by hundreds of people on campus and still feeling totally out of place is one of the weirdest, heaviest feelings—and way more common here than people admit. You don’t have to perform or explain anything with me.",
+          "Hostel and campus life can feel surprisingly lonely when everyone already seems to have their groups. I’m really glad you reached out instead of keeping it bottled up today."
+        ]);
+      }
+
+      if (isBored) {
+        state.topicContext = 'bored';
+        return pickUnique([
+          "Honestly, that awkward gap between lectures when everyone is glued to their phones is peak campus boredom. I’m sitting near the canteen right now—what department or year are you in (only if you feel like sharing)?"
+        ]);
+      }
+
+      // Natural multi-turn follow-ups reflecting back what the user wrote
+      if (turn === 1) {
+        return pickUnique([
+          "Hey, thanks for messaging—it takes a tiny bit of courage to write to a real person instead of an app. I’m listening, so say as much or as little as you want.",
+          "Hi! I’m a fellow student volunteer here on campus. Glad you took a moment to pause and message—what kind of day has it been for you so far?"
+        ]);
+      }
+
+      if (turn === 2) {
+        return pickUnique([
+          "I hear you. Half of us are walking around campus carrying stuff like this quietly because we don’t want to 'trauma dump' on our usual friends. It really helps just letting a bit of air out.",
+          "That makes a lot of sense. Sometimes you don't even need someone to fix the problem—you just want another human to acknowledge that it's a lot right now."
+        ]);
+      }
+
+      return pickUnique([
+        "Totally get that. Campus moves so fast here that it’s easy to go a whole week without having one unhurried, honest conversation.",
+        "For sure. No pressure to keep typing if you have to run to a lecture, by the way—and if you’re around at 4 pm, that green-dot table in the canteen is super chill.",
+        "I'm right here with you. Take whatever pace feels comfortable—there's zero expectation to wrap things up neatly."
+      ]);
+    }
+
+    // Crisis Keyword Detection
+    function containsCrisisKeywords(text) {
+      const lower = text.toLowerCase();
+      const keywords = ['suicide', 'kill myself', 'end my life', 'self harm', 'hurt myself', 'want to die', 'cant go on', "can't go on", 'hopeless', 'panic attack'];
+      return keywords.some(k => lower.includes(k));
+    }
+
+    // Render Both Student Feed & Volunteer Mirrored Feed
+    function renderAllMessages() {
+      const studentContainer = document.getElementById('chat-messages');
+      const wozContainer = document.getElementById('woz-messages');
+
+      // Student Welcome Header Card
+      let studentHTML = `
+        <div class="bg-warmWhite/90 border border-espresso/10 rounded-2xl p-3.5 text-xs text-espressoLight leading-relaxed shadow-xs">
+          <div class="flex items-center gap-1.5 font-bold text-espresso mb-1">
+            <span class="w-2 h-2 rounded-full bg-skyBlue"></span>
+            <span>Connected to a trained campus peer</span>
+          </div>
+          No names needed. Say as much or as little as you want—there’s zero rush here.
+        </div>
+      `;
+
+      // Volunteer Inbox Header Card
+      let wozHTML = state.messages.length === 0 ? `
+        <div class="bg-warmWhite border border-espresso/10 rounded-2xl p-3.5 text-xs text-espressoLight leading-relaxed">
+          <p class="font-bold text-espresso mb-1">Waiting for a student to scan &amp; message…</p>
+          Type a message in the <strong>Student Phone</strong> on the left—it will appear here immediately so you can type and send a real reply back!
+        </div>
+      ` : '';
+
+      state.messages.forEach(msg => {
+        if (msg.sender === 'student') {
+          // Student view: right-aligned Soft Peach bubble
+          studentHTML += `
+            <div class="flex flex-col items-end msg-enter">
+              <div class="max-w-[82%] bg-softPeach text-espresso rounded-2xl rounded-br-sm px-4 py-2.5 text-sm leading-relaxed shadow-card border border-espresso/10 whitespace-pre-wrap">${escapeHTML(msg.text)}</div>
+              <span class="text-[10px] text-espressoLight mt-1 mr-1">You · ${msg.time}</span>
+            </div>
+          `;
+          // Volunteer view: left-aligned incoming student message
+          wozHTML += `
+            <div class="flex flex-col items-start msg-enter">
+              <div class="max-w-[85%] bg-softPeach/80 text-espresso rounded-2xl rounded-bl-sm px-4 py-2.5 text-sm leading-relaxed shadow-xs border border-espresso/10 whitespace-pre-wrap">${escapeHTML(msg.text)}</div>
+              <span class="text-[10px] text-espressoLight mt-1 ml-1">Anonymous Student · ${msg.time}</span>
+            </div>
+          `;
+        } else if (msg.sender === 'volunteer') {
+          // Student view: left-aligned Warm White + Sky Blue border bubble
+          studentHTML += `
+            <div class="flex flex-col items-start msg-enter">
+              <div class="max-w-[85%] bg-warmWhite text-espresso rounded-2xl rounded-bl-sm px-4 py-2.5 text-sm leading-relaxed shadow-card border-l-4 border-l-skyBlue border border-espresso/10 whitespace-pre-wrap">${escapeHTML(msg.text)}</div>
+              <span class="text-[10px] text-espressoLight mt-1 ml-1">Campus Peer Volunteer · ${msg.time}</span>
+            </div>
+          `;
+          // Volunteer view: right-aligned outgoing volunteer message
+          wozHTML += `
+            <div class="flex flex-col items-end msg-enter">
+              <div class="max-w-[85%] bg-skyBlue/20 text-espresso rounded-2xl rounded-br-sm px-4 py-2.5 text-sm leading-relaxed shadow-xs border border-skyBlue/35 whitespace-pre-wrap">${escapeHTML(msg.text)}</div>
+              <span class="text-[10px] text-espressoLight mt-1 mr-1">You (Volunteer) · ${msg.time}</span>
+            </div>
+          `;
+        } else if (msg.sender === 'open_table') {
+          const rsvpFooter = state.rsvpConfirmed
+            ? `<div class="w-full py-2 px-3 rounded-xl bg-leafGreen/15 border border-leafGreen/30 text-espresso flex items-center justify-between text-xs font-bold">
+                 <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-leafGreen"></span>Noted! Look for the green dot at 4:00 PM.</span>
+                 <span class="text-leafGreen">✓</span>
+               </div>`
+            : `<button type="button" onclick="confirmOpenTableRSVP()" class="w-full py-2.5 px-3.5 rounded-xl bg-coralGlow hover:bg-[#f27649] text-warmWhite font-bold text-xs shadow-xs transition-colors">
+                 I might drop by (zero obligation)
+               </button>`;
+
+          const cardHTML = `
+            <div class="msg-enter my-1 bg-gradient-to-br from-softPeach/75 to-warmWhite rounded-3xl p-4 border-2 border-coralGlow/45 shadow-card">
+              <div class="flex items-center justify-between mb-2">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-warmWhite text-espresso text-[11px] font-bold shadow-xs">
+                  <span class="w-2.5 h-2.5 rounded-full bg-leafGreen green-dot-pulse"></span>
+                  <span>Small Human Step</span>
+                </span>
+                <span class="text-[11px] font-semibold text-espressoLight">4:00 PM · Canteen</span>
+              </div>
+              <p class="text-sm font-semibold text-espresso leading-snug mb-2">
+                “There’s an Open Table in the canteen at 4 pm, marked with a green dot. Come sit; you don’t have to talk.”
+              </p>
+              <p class="text-xs text-espressoLight mb-3">
+                It’s a relaxed group table, not a 1-on-1 meetup—bring chai or keep your headphones on.
+              </p>
+              ${rsvpFooter}
+            </div>
+          `;
+          studentHTML += cardHTML;
+          wozHTML += `
+            <div class="text-center my-1">
+              <span class="inline-block px-3 py-1 rounded-full bg-softPeach/60 text-espresso text-[11px] font-semibold">
+                ● Sent 4:00 PM Open Table Canteen Invitation ${state.rsvpConfirmed ? '(Student clicked "I might drop by")' : ''}
+              </span>
+            </div>
+          `;
+        } else if (msg.sender === 'safety') {
+          const safetyHTML = `
+            <div class="msg-enter bg-tomatoJam/10 border border-tomatoJam/30 rounded-2xl p-3.5 text-xs text-espresso">
+              <p class="font-bold text-tomatoJam mb-1">You don’t have to carry this alone.</p>
+              <p class="leading-relaxed mb-2">Peer volunteers aren’t counsellors—please connect with free, confidential professionals right away:</p>
+              <div class="flex flex-wrap gap-2">
+                <a href="tel:9152987821" class="px-3 py-1.5 rounded-xl bg-tomatoJam text-warmWhite font-bold">Call iCall: 9152987821</a>
+                <button type="button" onclick="toggleSafetyModal(true)" class="px-3 py-1.5 rounded-xl bg-warmWhite text-tomatoJam font-bold border border-tomatoJam/25">24/7 Helplines</button>
+              </div>
+            </div>
+          `;
+          studentHTML += safetyHTML;
+          wozHTML += `
+            <div class="bg-tomatoJam/10 border border-tomatoJam/30 rounded-2xl p-3 text-xs text-tomatoJam font-semibold">
+              ⚠️ Safety Protocol Triggered: Helpline card surfaced to student. Follow escalation guide.
+            </div>
+          `;
+        }
+      });
+
+      studentContainer.innerHTML = studentHTML;
+      wozContainer.innerHTML = wozHTML;
+      scrollChatContainers();
+    }
+
+    function scrollChatContainers() {
+      const studentContainer = document.getElementById('chat-messages');
+      const wozContainer = document.getElementById('woz-messages');
+      if (studentContainer) studentContainer.scrollTop = studentContainer.scrollHeight;
+      if (wozContainer) wozContainer.scrollTop = wozContainer.scrollHeight;
+    }
+
+    function getCurrentTime() {
+      return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function escapeHTML(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>
