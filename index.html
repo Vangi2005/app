@@ -4,13 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Human Typing… — Campus Peer Connection Prototype</title>
-  <!-- Load Tailwind CSS before configuring tailwind.config -->
+  <!-- Load Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Google Fonts: Fraunces (warm editorial serif) & Plus Jakarta Sans (clean friendly UI) -->
+  <!-- Google Fonts: Fredoka (chunky playful sticker type), Fraunces (warm retro display), Plus Jakarta Sans (legible friendly UI) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700;9..144,800&family=Fredoka:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 
   <script>
     window.tailwind = window.tailwind || {};
@@ -18,24 +18,27 @@
       theme: {
         extend: {
           colors: {
-            honeydew: '#F6FFEA',
-            softPeach: '#FFDE96',
-            coralGlow: '#FA855A',
-            tomatoJam: '#C93638',
-            skyBlue: '#62C4DA',
-            espresso: '#2D2422',
-            espressoLight: '#5C4D49',
-            warmWhite: '#FFFDF8',
-            leafGreen: '#2E8B57',
+            honeydew: '#F2F9E8',
+            butterYellow: '#FCD36A',
+            coralGlow: '#F97B56',
+            tomatoJam: '#D6383A',
+            skyBlue: '#6AC5DC',
+            espresso: '#241C1A',
+            espressoLight: '#584844',
+            warmCream: '#FFFDF5',
+            leafGreen: '#2D8A56',
           },
           fontFamily: {
+            sticker: ['Fredoka', 'cursive', 'sans-serif'],
             display: ['Fraunces', 'Georgia', 'serif'],
             sans: ['Plus Jakarta Sans', 'sans-serif'],
           },
           boxShadow: {
-            'soft': '0 10px 30px -5px rgba(45, 36, 34, 0.08)',
-            'card': '0 4px 16px -2px rgba(45, 36, 34, 0.06)',
-            'sticker': '0 14px 34px -6px rgba(45, 36, 34, 0.14)',
+            'comic-xs': '2px 2px 0px #241C1A',
+            'comic-sm': '3px 3px 0px #241C1A',
+            'comic': '4px 4px 0px #241C1A',
+            'comic-lg': '6px 6px 0px #241C1A',
+            'diecut': '0 0 0 4px #FFFDF5, 4px 5px 0 4px #241C1A',
           }
         }
       }
@@ -44,65 +47,155 @@
 
   <style>
     body {
-      background-color: #EEF5E3;
-      background-image: 
-        radial-gradient(at 15% 15%, rgba(255, 222, 150, 0.45) 0px, transparent 50%),
-        radial-gradient(at 85% 20%, rgba(98, 196, 218, 0.28) 0px, transparent 50%),
-        radial-gradient(at 50% 90%, rgba(250, 133, 90, 0.22) 0px, transparent 55%);
-      color: #2D2422;
+      background-color: #EBF5DE;
+      background-image:
+        radial-gradient(#241C1A 1px, transparent 1px),
+        radial-gradient(at 15% 15%, rgba(252, 211, 106, 0.5) 0px, transparent 50%),
+        radial-gradient(at 85% 20%, rgba(106, 197, 220, 0.35) 0px, transparent 50%),
+        radial-gradient(at 50% 90%, rgba(249, 123, 86, 0.28) 0px, transparent 55%);
+      background-size: 24px 24px, 100% 100%, 100% 100%, 100% 100%;
+      color: #241C1A;
       font-family: 'Plus Jakarta Sans', sans-serif;
     }
 
-    @keyframes bounceSlow {
-      0%, 80%, 100% { transform: translateY(0); opacity: 0.55; }
-      40% { transform: translateY(-5px); opacity: 1; }
+    /* Chunky Retro Comic / Sticker Outlined Text */
+    .sticker-text-coral {
+      font-family: 'Fredoka', sans-serif;
+      color: #F97B56;
+      -webkit-text-stroke: 1.8px #241C1A;
+      paint-order: stroke fill;
+      text-shadow: 2px 2px 0px #241C1A;
     }
-    .dot-1 { animation: bounceSlow 1.6s infinite ease-in-out 0s; }
-    .dot-2 { animation: bounceSlow 1.6s infinite ease-in-out 0.22s; }
-    .dot-3 { animation: bounceSlow 1.6s infinite ease-in-out 0.44s; }
+
+    .sticker-text-yellow {
+      font-family: 'Fredoka', sans-serif;
+      color: #FCD36A;
+      -webkit-text-stroke: 1.8px #241C1A;
+      paint-order: stroke fill;
+      text-shadow: 2px 2px 0px #241C1A;
+    }
+
+    .sticker-text-cream {
+      font-family: 'Fredoka', sans-serif;
+      color: #FFFDF5;
+      -webkit-text-stroke: 2px #241C1A;
+      paint-order: stroke fill;
+      text-shadow: 2.5px 2.5px 0px #241C1A;
+    }
+
+    /* Tactile Sticker Border & Press Mechanics */
+    .comic-border {
+      border: 2.5px solid #241C1A;
+    }
+
+    .comic-border-thin {
+      border: 2px solid #241C1A;
+    }
+
+    .btn-tactile {
+      border: 2.5px solid #241C1A;
+      box-shadow: 3px 3px 0px #241C1A;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.15s ease;
+    }
+    .btn-tactile:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0px #241C1A;
+    }
+    .btn-tactile:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0px #241C1A;
+    }
+
+    /* Playful Starter Pill Tilts */
+    .pill-tilt-left {
+      transform: rotate(-1.2deg);
+      transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s ease;
+    }
+    .pill-tilt-left:hover {
+      transform: rotate(0deg) scale(1.03);
+    }
+    .pill-tilt-right {
+      transform: rotate(1.2deg);
+      transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s ease;
+    }
+    .pill-tilt-right:hover {
+      transform: rotate(0deg) scale(1.03);
+    }
+
+    /* Animations */
+    @keyframes bounceSlow {
+      0%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-5px); }
+    }
+    .dot-1 { animation: bounceSlow 1.4s infinite ease-in-out 0s; }
+    .dot-2 { animation: bounceSlow 1.4s infinite ease-in-out 0.2s; }
+    .dot-3 { animation: bounceSlow 1.4s infinite ease-in-out 0.4s; }
+
+    @keyframes wiggleFloat {
+      0%, 100% { transform: rotate(-2deg) translateY(0px); }
+      50% { transform: rotate(2deg) translateY(-3px); }
+    }
+    .mascot-wiggle { animation: wiggleFloat 3.6s ease-in-out infinite; }
+
+    @keyframes sparkleTwinkle {
+      0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
+      50% { transform: scale(1.25) rotate(12deg); opacity: 0.75; }
+    }
+    .sparkle-anim { animation: sparkleTwinkle 2.4s ease-in-out infinite; }
+    .sparkle-anim-delay { animation: sparkleTwinkle 2.4s ease-in-out infinite 1.1s; }
 
     @keyframes pulseDot {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.3); opacity: 0.75; }
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.3); }
     }
-    .green-dot-pulse { animation: pulseDot 2.2s infinite ease-in-out; }
+    .green-dot-pulse { animation: pulseDot 2s infinite ease-in-out; }
 
-    @keyframes slideUpFade {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
+    @keyframes slideUpPop {
+      0% { opacity: 0; transform: translateY(10px) scale(0.96); }
+      70% { opacity: 1; transform: translateY(-2px) scale(1.01); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
     }
-    .msg-enter { animation: slideUpFade 0.28s ease-out forwards; }
+    .msg-enter { animation: slideUpPop 0.28s ease-out forwards; }
 
-    .chat-scroll::-webkit-scrollbar { width: 5px; height: 5px; }
+    .chat-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
     .chat-scroll::-webkit-scrollbar-track { background: transparent; }
-    .chat-scroll::-webkit-scrollbar-thumb { background: rgba(45, 36, 34, 0.16); border-radius: 9999px; }
+    .chat-scroll::-webkit-scrollbar-thumb { background: rgba(36, 28, 26, 0.22); border-radius: 9999px; }
   </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-between py-3 px-3 sm:px-6 selection:bg-softPeach selection:text-espresso">
+<body class="min-h-screen flex flex-col items-center justify-between py-3 px-3 sm:px-6 selection:bg-butterYellow selection:text-espresso">
 
   <!-- Top Presentation & Testing Bar -->
-  <header class="w-full max-w-5xl flex flex-wrap items-center justify-between gap-3 mb-3 px-2">
-    <div class="flex items-center gap-2.5">
-      <span class="inline-flex items-center justify-center w-8 h-8 rounded-2xl bg-softPeach text-espresso font-display font-bold text-sm shadow-sm">
-        •••
-      </span>
+  <header class="w-full max-w-5xl flex flex-wrap items-center justify-between gap-3 mb-3 px-1">
+    <div class="flex items-center gap-3">
+      <!-- Die-Cut Mini Mascot Badge -->
+      <div class="w-10 h-10 rounded-2xl bg-butterYellow comic-border shadow-comic-xs flex items-center justify-center -rotate-3">
+        <svg viewBox="0 0 44 36" class="w-7 h-7" fill="none">
+          <path d="M4 8C4 5.23858 6.23858 3 9 3H33C35.7614 3 38 5.23858 38 8V22C38 24.7614 35.7614 27 33 27H16L8 33V27H9C6.23858 27 4 24.7614 4 22V8Z" fill="#F97B56" stroke="#241C1A" stroke-width="3" stroke-linejoin="round"/>
+          <circle cx="15" cy="13" r="2" fill="#241C1A"/>
+          <circle cx="27" cy="13" r="2" fill="#241C1A"/>
+          <path d="M16 18C17.8 20.5 24.2 20.5 26 18" stroke="#241C1A" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+      </div>
       <div>
-        <span class="font-display font-bold text-base sm:text-lg text-espresso tracking-tight">Human Typing…</span>
-        <span class="hidden md:inline-block text-xs text-espressoLight ml-2">Mumbai Campus Prototype · Peer Connection</span>
+        <div class="flex items-center gap-1.5">
+          <span class="font-sticker font-bold text-lg sm:text-xl text-espresso tracking-tight">HUMAN TYPING…</span>
+          <span class="text-coralGlow font-bold text-sm">✦</span>
+        </div>
+        <span class="hidden md:inline-block text-xs font-semibold text-espressoLight">Mumbai Campus Sticker Prototype · Real Peer Connection</span>
       </div>
     </div>
 
     <!-- Mode Switcher Pill -->
-    <div class="inline-flex flex-wrap p-1 rounded-2xl sm:rounded-full bg-warmWhite/90 backdrop-blur-sm border border-espresso/10 shadow-sm gap-1">
-      <button id="tab-phone" onclick="switchView('phone')" class="px-3.5 py-1.5 rounded-xl sm:rounded-full text-xs sm:text-sm font-semibold transition-all bg-espresso text-honeydew shadow-sm">
+    <div class="inline-flex flex-wrap p-1.5 rounded-2xl sm:rounded-full bg-warmCream comic-border shadow-comic-sm gap-1.5">
+      <button id="tab-phone" onclick="switchView('phone')" class="px-3.5 py-1.5 rounded-xl sm:rounded-full text-xs sm:text-sm font-bold transition-all bg-butterYellow text-espresso comic-border-thin shadow-comic-xs">
         Mobile Chat (Student)
       </button>
-      <button id="tab-woz" onclick="switchView('woz')" class="px-3.5 py-1.5 rounded-xl sm:rounded-full text-xs sm:text-sm font-semibold transition-all text-espressoLight hover:text-espresso flex items-center gap-1.5">
-        <span class="w-2 h-2 rounded-full bg-coralGlow"></span>
+      <button id="tab-woz" onclick="switchView('woz')" class="px-3.5 py-1.5 rounded-xl sm:rounded-full text-xs sm:text-sm font-bold transition-all text-espressoLight hover:text-espresso flex items-center gap-1.5">
+        <span class="w-2.5 h-2.5 rounded-full bg-coralGlow border border-espresso"></span>
         <span>Split Wizard-of-Oz Demo</span>
       </button>
-      <button id="tab-sticker" onclick="switchView('sticker')" class="px-3.5 py-1.5 rounded-xl sm:rounded-full text-xs sm:text-sm font-semibold transition-all text-espressoLight hover:text-espresso">
-        Sticker &amp; Table Card
+      <button id="tab-sticker" onclick="switchView('sticker')" class="px-3.5 py-1.5 rounded-xl sm:rounded-full text-xs sm:text-sm font-bold transition-all text-espressoLight hover:text-espresso">
+        Stickers &amp; Table Tent
       </button>
     </div>
   </header>
@@ -115,36 +208,46 @@
     <!-- ========================================================== -->
     <div id="workspace-chat" class="w-full max-w-5xl flex flex-col lg:flex-row items-center justify-center gap-6 transition-all">
 
-      <!-- LEFT / CENTER: STUDENT MOBILE WEB CHAT -->
-      <section id="view-phone" class="w-full max-w-[420px] h-[82vh] min-h-[580px] max-h-[800px] bg-honeydew rounded-[2.4rem] border-[6px] border-warmWhite shadow-soft flex flex-col overflow-hidden relative transition-all duration-300">
+      <!-- LEFT / CENTER: STUDENT MOBILE WEB CHAT (Tactile Sticker Book Frame) -->
+      <section id="view-phone" class="w-full max-w-[425px] h-[83vh] min-h-[590px] max-h-[820px] bg-honeydew rounded-[2.4rem] border-[3px] border-espresso shadow-comic-lg flex flex-col overflow-hidden relative transition-all duration-300">
         
         <!-- Top Bar inside Mobile Frame -->
-        <div class="px-5 pt-4 pb-3 bg-honeydew/95 backdrop-blur-md border-b border-espresso/10 flex items-center justify-between z-10 shrink-0">
+        <div class="px-4 pt-3.5 pb-3 bg-warmCream border-b-[2.5px] border-espresso flex items-center justify-between z-10 shrink-0">
           <!-- Left: Campus Badge (Landing) or Back/Reset (Active Chat) -->
-          <div id="header-left-landing" class="flex items-center gap-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-leafGreen"></span>
-            <span class="text-xs font-semibold text-espressoLight tracking-wide">Mumbai Campus · 18+ Peer Space</span>
+          <div id="header-left-landing" class="flex items-center gap-2 bg-honeydew px-3 py-1 rounded-full comic-border-thin">
+            <span class="w-2.5 h-2.5 rounded-full bg-leafGreen border border-espresso"></span>
+            <span class="text-xs font-extrabold text-espresso tracking-tight">Mumbai Campus · 18+</span>
           </div>
 
-          <div id="header-left-chat" class="hidden flex items-center gap-2.5">
-            <button onclick="resetSession()" title="Start a fresh anonymous chat" class="px-2.5 py-1.5 rounded-full bg-warmWhite hover:bg-softPeach/60 flex items-center gap-1 text-xs font-semibold text-espresso transition-colors border border-espresso/10">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+          <div id="header-left-chat" class="hidden flex items-center gap-2">
+            <button onclick="resetSession()" title="Start a fresh anonymous chat" class="px-2.5 py-1.5 rounded-full bg-butterYellow hover:bg-butterYellow/80 flex items-center gap-1 text-xs font-extrabold text-espresso comic-border-thin shadow-comic-xs active:translate-x-[1px] active:translate-y-[1px]">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
-              <span>New Chat</span>
+              <span>New</span>
             </button>
-            <div>
-              <h2 class="font-display font-bold text-sm text-espresso leading-tight">Campus Peer</h2>
-              <div class="flex items-center gap-1.5 mt-0.5">
-                <span class="w-2 h-2 rounded-full bg-leafGreen"></span>
-                <span class="text-[11px] font-medium text-espressoLight">Human, not AI</span>
+            <div class="flex items-center gap-2">
+              <!-- Cute Mini Smiling Speech Bubble Avatar -->
+              <div class="w-8 h-8 rounded-xl bg-coralGlow comic-border-thin flex items-center justify-center shrink-0">
+                <svg viewBox="0 0 32 28" class="w-6 h-6" fill="none">
+                  <circle cx="11" cy="11" r="2" fill="#241C1A"/>
+                  <circle cx="21" cy="11" r="2" fill="#241C1A"/>
+                  <path d="M11 16C12.8 18.5 19.2 18.5 21 16" stroke="#241C1A" stroke-width="2.4" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <div>
+                <h2 class="font-sticker font-bold text-sm text-espresso leading-none">Campus Peer</h2>
+                <div class="flex items-center gap-1 mt-1">
+                  <span class="w-2 h-2 rounded-full bg-leafGreen border border-espresso"></span>
+                  <span class="text-[11px] font-bold text-espressoLight">Human, not an AI</span>
+                </div>
               </div>
             </div>
           </div>
 
           <!-- Right: Discreet Urgent Help / Safety Route Button -->
-          <button onclick="toggleSafetyModal(true)" class="px-3 py-1.5 rounded-full bg-tomatoJam/10 hover:bg-tomatoJam/15 text-tomatoJam text-xs font-bold transition-colors flex items-center gap-1.5 border border-tomatoJam/20">
-            <span class="w-1.5 h-1.5 rounded-full bg-tomatoJam"></span>
+          <button onclick="toggleSafetyModal(true)" class="px-3 py-1.5 rounded-full bg-tomatoJam/15 hover:bg-tomatoJam/25 text-tomatoJam text-xs font-extrabold transition-colors flex items-center gap-1.5 comic-border-thin shadow-comic-xs">
+            <span class="w-2 h-2 rounded-full bg-tomatoJam"></span>
             <span>Urgent help</span>
           </button>
         </div>
@@ -152,40 +255,74 @@
         <!-- ========================================== -->
         <!-- SCREEN A: QR SCAN LANDING / ENTRY SCREEN   -->
         <!-- ========================================== -->
-        <div id="screen-landing" class="flex-1 overflow-y-auto chat-scroll px-5 py-4 flex flex-col justify-between">
+        <div id="screen-landing" class="flex-1 overflow-y-auto chat-scroll px-4 py-3.5 flex flex-col justify-between">
           
-          <!-- Top Hero: Signature Chat Bubble Visual -->
-          <div class="text-center mt-1">
-            <div class="inline-flex flex-col items-center">
-              <div class="relative bg-warmWhite border-2 border-espresso/15 rounded-[2rem] rounded-bl-md px-7 py-4 shadow-card mb-2.5">
-                <div class="flex items-center justify-center gap-2.5 mb-1.5">
-                  <span class="w-3.5 h-3.5 rounded-full bg-coralGlow dot-1"></span>
-                  <span class="w-3.5 h-3.5 rounded-full bg-softPeach dot-2"></span>
-                  <span class="w-3.5 h-3.5 rounded-full bg-skyBlue dot-3"></span>
-                </div>
-                <h1 class="font-display font-bold text-2xl sm:text-[26px] text-espresso tracking-tight">
-                  Human Typing…
-                </h1>
+          <!-- Top Hero: Die-Cut Sticker with Two Best-Friend Speech Bubbles -->
+          <div class="text-center relative">
+            <!-- Die-Cut Sticker Container -->
+            <div class="inline-block bg-warmCream rounded-[2rem] px-4 pt-3 pb-3.5 comic-border shadow-comic relative mascot-wiggle">
+              <!-- Four-Point Sparkle Stars -->
+              <svg class="w-5 h-5 text-butterYellow absolute -top-2.5 -left-2 sparkle-anim" viewBox="0 0 24 24" fill="currentColor" stroke="#241C1A" stroke-width="1.8">
+                <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/>
+              </svg>
+              <svg class="w-4 h-4 text-skyBlue absolute -bottom-2 -right-2 sparkle-anim-delay" viewBox="0 0 24 24" fill="currentColor" stroke="#241C1A" stroke-width="1.8">
+                <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/>
+              </svg>
+
+              <!-- Retro Outlined Headline -->
+              <div class="font-sticker font-bold text-2xl sm:text-[26px] tracking-wide leading-none sticker-text-coral mb-2">
+                HUMAN TYPING…
               </div>
+
+              <!-- Custom SVG: Yellow (•••) Bubble + Smiling Coral Bubble Buddies -->
+              <svg viewBox="0 0 220 96" class="w-48 h-20 mx-auto overflow-visible" fill="none">
+                <!-- Right Coral Buddy Bubble -->
+                <g transform="translate(96, 4)">
+                  <path d="M16 4H96C104.837 4 112 11.1634 112 20V52C112 60.8366 104.837 68 96 68H86L94 82L70 68H16C7.16344 68 0 60.8366 0 52V20C0 11.1634 7.16344 4 16 4Z" fill="#F97B56" stroke="#241C1A" stroke-width="3.5" stroke-linejoin="round"/>
+                  <!-- Retro Pie-Cut Cartoon Eyes -->
+                  <circle cx="48" cy="31" r="4.5" fill="#241C1A"/>
+                  <circle cx="46.5" cy="29.5" r="1.4" fill="#FFFDF5"/>
+                  <circle cx="76" cy="31" r="4.5" fill="#241C1A"/>
+                  <circle cx="74.5" cy="29.5" r="1.4" fill="#FFFDF5"/>
+                  <!-- Rosy Cheeks -->
+                  <ellipse cx="40" cy="40" rx="4" ry="2.2" fill="#D6383A" opacity="0.55"/>
+                  <ellipse cx="84" cy="40" rx="4" ry="2.2" fill="#D6383A" opacity="0.55"/>
+                  <!-- Happy Smile -->
+                  <path d="M53 42C56.5 48.5 67.5 48.5 71 42" stroke="#241C1A" stroke-width="3.2" stroke-linecap="round"/>
+                </g>
+
+                <!-- Left Buttery Yellow Typing Bubble -->
+                <g transform="translate(8, 16)">
+                  <path d="M16 0H98C106.837 0 114 7.16344 114 16V48C114 56.8366 106.837 64 98 64H42L20 78L27 64H16C7.16344 64 0 56.8366 0 48V16C0 7.16344 7.16344 0 16 0Z" fill="#FCD36A" stroke="#241C1A" stroke-width="3.5" stroke-linejoin="round"/>
+                  <!-- Animated Bouncing Dots -->
+                  <circle cx="37" cy="32" r="5" fill="#FFFDF5" stroke="#241C1A" stroke-width="2.5" class="dot-1"/>
+                  <circle cx="57" cy="32" r="5" fill="#FFFDF5" stroke="#241C1A" stroke-width="2.5" class="dot-2"/>
+                  <circle cx="77" cy="32" r="5" fill="#FFFDF5" stroke="#241C1A" stroke-width="2.5" class="dot-3"/>
+                </g>
+              </svg>
             </div>
 
-            <p class="text-sm font-medium text-espresso leading-snug max-w-[310px] mx-auto mt-1">
-              Not an AI. A trained student volunteer from your campus. <span class="underline decoration-coralGlow decoration-2 underline-offset-2">Replies in a few minutes.</span>
+            <p class="text-[13px] font-bold text-espresso leading-snug max-w-[320px] mx-auto mt-2.5">
+              Not an AI. An actual student peer from your campus is on the other side. <span class="bg-butterYellow px-1.5 py-0.5 rounded-md border border-espresso">Replies in a few mins!</span>
             </p>
 
-            <!-- Core Insight Pill -->
-            <div class="mt-3 inline-block px-3.5 py-1.5 rounded-2xl bg-softPeach/55 border border-softPeach text-espresso text-xs font-semibold">
-              “Instant is easy. Real takes a moment, and it is worth it.”
+            <!-- Wavy Ribbon Banner Pill matching Bench Sticker -->
+            <div class="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-skyBlue/35 comic-border-thin text-espresso text-[11px] font-extrabold">
+              <span>✦</span>
+              <span>“Instant is easy. Real takes a moment.”</span>
+              <span>✦</span>
             </div>
           </div>
 
-          <!-- Middle: Live Anonymous Message Box & Starter Pills -->
-          <form onsubmit="handleLandingSubmit(event)" class="my-3.5 bg-warmWhite rounded-3xl p-4 border border-espresso/10 shadow-card">
+          <!-- Middle: Tactile Anonymous Message Box & Tilted Starter Pills -->
+          <form onsubmit="handleLandingSubmit(event)" class="my-2.5 bg-warmCream rounded-3xl p-3.5 comic-border shadow-comic">
             <div class="flex items-center justify-between mb-2">
-              <label for="landing-input" class="text-[11px] font-bold uppercase tracking-wider text-espressoLight">
-                No name · No login · Type below
+              <label for="landing-input" class="text-[11px] font-extrabold uppercase tracking-wider text-espresso">
+                No name · No login · Just type
               </label>
-              <span class="text-[11px] font-semibold text-espresso bg-skyBlue/25 px-2.5 py-0.5 rounded-full">100% Anonymous</span>
+              <span class="text-[11px] font-extrabold text-espresso bg-butterYellow px-2.5 py-0.5 rounded-full border-[1.5px] border-espresso">
+                100% Anonymous
+              </span>
             </div>
 
             <textarea
@@ -193,43 +330,43 @@
               rows="2"
               onkeydown="handleLandingEnter(event)"
               placeholder="Write anything, from a small worry to 'nothing, just bored'…"
-              class="w-full rounded-2xl bg-honeydew/75 border border-espresso/15 focus:border-skyBlue focus:ring-2 focus:ring-skyBlue/30 focus:outline-none p-3 text-sm text-espresso placeholder:text-espressoLight/65 resize-none transition-all"
+              class="w-full rounded-2xl bg-honeydew comic-border-thin focus:bg-warmCream focus:ring-2 focus:ring-skyBlue focus:outline-none p-2.5 text-sm font-medium text-espresso placeholder:text-espressoLight/70 resize-none transition-all"
             ></textarea>
 
-            <!-- Quick Starter Pills -->
-            <div class="mt-2.5">
-              <p class="text-[11px] font-medium text-espressoLight mb-1.5">Or tap a starter &amp; send right away:</p>
+            <!-- Playful Tilted Starter Sticker Chips -->
+            <div class="mt-2">
+              <p class="text-[11px] font-bold text-espressoLight mb-1.5">Or tap a sticker starter &amp; send right away:</p>
               <div class="flex flex-wrap gap-1.5">
-                <button type="button" onclick="sendStarterDirectly('Nothing, just bored between lectures')" class="text-left text-xs px-3 py-1.5 rounded-full bg-softPeach/50 hover:bg-softPeach text-espresso font-medium transition-colors border border-softPeach">
-                  Nothing, just bored between lectures
+                <button type="button" onclick="sendStarterDirectly('Nothing, just bored between lectures')" class="pill-tilt-left text-left text-xs px-3 py-1.5 rounded-full bg-butterYellow hover:bg-butterYellow/90 text-espresso font-bold comic-border-thin shadow-comic-xs">
+                  😴 Bored between lectures
                 </button>
-                <button type="button" onclick="sendStarterDirectly('Overwhelmed with submissions and exams')" class="text-left text-xs px-3 py-1.5 rounded-full bg-skyBlue/20 hover:bg-skyBlue/35 text-espresso font-medium transition-colors border border-skyBlue/30">
-                  Overwhelmed with submissions
+                <button type="button" onclick="sendStarterDirectly('Overwhelmed with submissions and exams')" class="pill-tilt-right text-left text-xs px-3 py-1.5 rounded-full bg-skyBlue/45 hover:bg-skyBlue/65 text-espresso font-bold comic-border-thin shadow-comic-xs">
+                  📚 Overwhelmed with submissions
                 </button>
-                <button type="button" onclick="sendStarterDirectly('Feeling a bit out of place lately')" class="text-left text-xs px-3 py-1.5 rounded-full bg-coralGlow/20 hover:bg-coralGlow/35 text-espresso font-medium transition-colors border border-coralGlow/30">
-                  Feeling a bit out of place lately
+                <button type="button" onclick="sendStarterDirectly('Feeling a bit out of place lately')" class="pill-tilt-left text-left text-xs px-3 py-1.5 rounded-full bg-coralGlow/35 hover:bg-coralGlow/55 text-espresso font-bold comic-border-thin shadow-comic-xs">
+                  🌧️ Feeling out of place lately
                 </button>
-                <button type="button" onclick="sendStarterDirectly('Just wanted a real person to talk to')" class="text-left text-xs px-3 py-1.5 rounded-full bg-honeydew hover:bg-softPeach/50 text-espresso font-medium transition-colors border border-espresso/15">
-                  Just wanted a real person to talk to
+                <button type="button" onclick="sendStarterDirectly('Just wanted a real person to talk to')" class="pill-tilt-right text-left text-xs px-3 py-1.5 rounded-full bg-honeydew hover:bg-butterYellow/50 text-espresso font-bold comic-border-thin shadow-comic-xs">
+                  💬 Just want a real chat
                 </button>
               </div>
             </div>
 
-            <!-- Primary CTA -->
+            <!-- Primary Chunky Sticker CTA -->
             <button
               type="submit"
-              class="mt-3.5 w-full py-3 px-5 rounded-2xl bg-coralGlow hover:bg-[#f27649] active:scale-[0.99] text-warmWhite font-bold text-sm sm:text-base shadow-md transition-all flex items-center justify-center gap-2"
+              class="mt-3 w-full py-3 px-5 rounded-2xl bg-coralGlow hover:bg-[#f76c43] text-espresso font-sticker font-bold text-base sm:text-lg btn-tactile flex items-center justify-center gap-2 tracking-wide"
             >
-              <span>Send &amp; Start Chat</span>
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <span>SEND &amp; START CHAT</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.8">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
               </svg>
             </button>
           </form>
 
           <!-- Bottom Privacy Note -->
-          <p class="text-[11px] text-center text-espressoLight leading-relaxed px-2">
-            Chats are private, moderated for safety, and deleted after your session. Not therapy—just a fellow student who gets it.
+          <p class="text-[11px] font-semibold text-center text-espressoLight leading-snug px-2">
+            Private, safe &amp; wiped after your chat. Not therapy—just a fellow student who gets it.
           </p>
         </div>
 
@@ -239,9 +376,9 @@
         <div id="screen-chat" class="hidden flex-1 flex flex-col overflow-hidden">
           
           <!-- Subtle Pace & Demo Controls Strip -->
-          <div class="px-4 py-2 bg-skyBlue/15 border-b border-skyBlue/25 flex items-center justify-between text-[11px] text-espresso shrink-0">
-            <span id="pace-strip-label" class="font-medium truncate">⏳ Human pace: real replies take a moment.</span>
-            <button type="button" onclick="triggerOpenTableInvite()" class="underline font-bold text-espressoLight hover:text-espresso ml-2 shrink-0">
+          <div class="px-4 py-2 bg-butterYellow/45 border-b-2 border-espresso flex items-center justify-between text-[11px] text-espresso shrink-0">
+            <span id="pace-strip-label" class="font-bold truncate">⏳ Human pace: real replies take a moment.</span>
+            <button type="button" onclick="triggerOpenTableInvite()" class="px-2 py-0.5 rounded-full bg-warmCream border border-espresso font-extrabold text-espresso hover:bg-butterYellow ml-2 shrink-0 shadow-comic-xs">
               Show 4pm invite
             </button>
           </div>
@@ -251,40 +388,40 @@
             <!-- Populated dynamically -->
           </div>
 
-          <!-- Human Delay / Reading / Typing Banner -->
-          <div id="human-wait-banner" class="hidden mx-3.5 mb-2 px-3.5 py-2.5 rounded-2xl bg-warmWhite border border-coralGlow/40 shadow-sm transition-all">
+          <!-- Human Delay / Reading / Typing Sticker Banner -->
+          <div id="human-wait-banner" class="hidden mx-3.5 mb-2.5 px-3.5 py-2.5 rounded-2xl bg-warmCream comic-border shadow-comic-sm transition-all">
             <div class="flex items-center justify-between gap-2">
               <div class="flex items-center gap-2.5">
-                <div class="flex items-center gap-1 px-2 py-1 rounded-full bg-softPeach/65 shrink-0">
-                  <span class="w-1.5 h-1.5 rounded-full bg-coralGlow dot-1"></span>
-                  <span class="w-1.5 h-1.5 rounded-full bg-espresso dot-2"></span>
-                  <span class="w-1.5 h-1.5 rounded-full bg-skyBlue dot-3"></span>
+                <div class="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-butterYellow comic-border-thin shrink-0">
+                  <span class="w-2 h-2 rounded-full bg-coralGlow border border-espresso dot-1"></span>
+                  <span class="w-2 h-2 rounded-full bg-warmCream border border-espresso dot-2"></span>
+                  <span class="w-2 h-2 rounded-full bg-skyBlue border border-espresso dot-3"></span>
                 </div>
                 <div>
-                  <p id="wait-status-title" class="text-xs font-bold text-espresso">A trained student volunteer is reading your note…</p>
-                  <p id="wait-status-sub" class="text-[11px] text-espressoLight">Instant is easy. Real takes a moment.</p>
+                  <p id="wait-status-title" class="text-xs font-extrabold text-espresso">A trained student volunteer is reading your note…</p>
+                  <p id="wait-status-sub" class="text-[11px] font-semibold text-espressoLight">Instant is easy. Real takes a moment.</p>
                 </div>
               </div>
-              <button id="skip-wait-btn" type="button" onclick="skipWaitDemo()" class="text-[11px] font-bold text-coralGlow hover:underline shrink-0 px-2.5 py-1 rounded-lg bg-coralGlow/10">
+              <button id="skip-wait-btn" type="button" onclick="skipWaitDemo()" class="text-[11px] font-extrabold text-espresso shrink-0 px-2.5 py-1 rounded-xl bg-coralGlow/30 hover:bg-coralGlow/50 border border-espresso">
                 Skip wait
               </button>
             </div>
           </div>
 
-          <!-- Bottom Message Input Bar (Always unlocked so user can send real messages anytime!) -->
-          <form id="chat-form" onsubmit="handleStudentChatSubmit(event)" class="p-3 bg-warmWhite border-t border-espresso/10 flex items-end gap-2 shrink-0">
+          <!-- Bottom Message Input Bar -->
+          <form id="chat-form" onsubmit="handleStudentChatSubmit(event)" class="p-3 bg-warmCream border-t-[2.5px] border-espresso flex items-end gap-2 shrink-0">
             <textarea
               id="chat-input"
               rows="1"
               oninput="autoResizeTextarea(this)"
               onkeydown="handleStudentEnter(event)"
               placeholder="Type a message…"
-              class="flex-1 max-h-28 rounded-2xl bg-honeydew/85 border border-espresso/15 focus:border-skyBlue focus:ring-2 focus:ring-skyBlue/30 focus:outline-none px-3.5 py-2.5 text-sm text-espresso placeholder:text-espressoLight/60 resize-none"
+              class="flex-1 max-h-28 rounded-2xl bg-honeydew comic-border-thin focus:bg-warmCream focus:ring-2 focus:ring-skyBlue focus:outline-none px-3.5 py-2.5 text-sm font-medium text-espresso placeholder:text-espressoLight/65 resize-none"
             ></textarea>
             <button
               type="submit"
               id="chat-send-btn"
-              class="h-10 px-4 rounded-2xl bg-coralGlow hover:bg-[#f27649] active:scale-[0.98] text-warmWhite font-bold text-sm shadow-sm transition-all flex items-center justify-center shrink-0"
+              class="h-10 px-4 rounded-2xl bg-coralGlow hover:bg-[#f76c43] text-espresso font-sticker font-bold text-sm btn-tactile flex items-center justify-center shrink-0"
             >
               Send
             </button>
@@ -296,71 +433,71 @@
       <!-- ========================================================== -->
       <!-- RIGHT PANEL (WIZARD-OF-OZ MODE): VOLUNTEER SHARED INBOX    -->
       <!-- ========================================================== -->
-      <section id="view-woz-volunteer" class="hidden w-full max-w-[440px] h-[82vh] min-h-[580px] max-h-[800px] bg-warmWhite rounded-[2.4rem] border-[6px] border-skyBlue/40 shadow-soft flex flex-col overflow-hidden relative">
+      <section id="view-woz-volunteer" class="hidden w-full max-w-[445px] h-[83vh] min-h-[590px] max-h-[820px] bg-warmCream rounded-[2.4rem] border-[3px] border-espresso shadow-comic-lg flex flex-col overflow-hidden relative">
         
         <!-- Volunteer Header -->
-        <div class="px-5 pt-4 pb-3 bg-skyBlue/15 border-b border-skyBlue/25 flex items-center justify-between shrink-0">
+        <div class="px-5 pt-3.5 pb-3 bg-skyBlue/35 border-b-[2.5px] border-espresso flex items-center justify-between shrink-0">
           <div class="flex items-center gap-2.5">
-            <div class="w-9 h-9 rounded-2xl bg-skyBlue text-warmWhite font-display font-bold flex items-center justify-center text-sm shadow-xs">
+            <div class="w-9 h-9 rounded-2xl bg-butterYellow comic-border-thin shadow-comic-xs text-espresso font-sticker font-bold flex items-center justify-center text-base">
               V
             </div>
             <div>
               <div class="flex items-center gap-1.5">
-                <h2 class="font-display font-bold text-sm text-espresso">Peer Volunteer Inbox</h2>
-                <span class="px-2 py-0.5 rounded-full bg-leafGreen/15 text-leafGreen text-[10px] font-bold">LIVE</span>
+                <h2 class="font-sticker font-bold text-base text-espresso">Peer Volunteer Inbox</h2>
+                <span class="px-2 py-0.5 rounded-full bg-leafGreen text-warmCream border border-espresso text-[10px] font-extrabold">LIVE</span>
               </div>
-              <p class="text-[11px] text-espressoLight">Wizard-of-Oz Demo · Reply directly as the peer</p>
+              <p class="text-[11px] font-semibold text-espressoLight">Wizard-of-Oz Demo · Reply as the peer</p>
             </div>
           </div>
 
-          <button type="button" onclick="triggerOpenTableInvite()" class="px-3 py-1.5 rounded-full bg-softPeach hover:bg-softPeach/80 text-espresso text-xs font-bold transition-colors border border-coralGlow/30">
-            + Send 4pm Invite
+          <button type="button" onclick="triggerOpenTableInvite()" class="px-3 py-1.5 rounded-full bg-butterYellow hover:bg-butterYellow/80 text-espresso text-xs font-extrabold btn-tactile">
+            + 4pm Invite
           </button>
         </div>
 
         <!-- Protocol Reminder Strip -->
-        <div class="px-4 py-2 bg-honeydew border-b border-espresso/10 text-[11px] text-espressoLight flex items-center justify-between shrink-0">
-          <span>💡 <strong>Protocol:</strong> Warm, unhurried, no unsolicited advice.</span>
-          <span id="woz-sync-status" class="font-semibold text-skyBlue">Synced</span>
+        <div class="px-4 py-2 bg-honeydew border-b-2 border-espresso text-[11px] font-semibold text-espresso flex items-center justify-between shrink-0">
+          <span>💡 <strong>Protocol:</strong> Warm, unhurried, zero advice-dumping.</span>
+          <span id="woz-sync-status" class="font-extrabold text-leafGreen">● Synced</span>
         </div>
 
         <!-- Mirrored Conversation Feed (Volunteer Perspective) -->
-        <div id="woz-messages" class="flex-1 overflow-y-auto chat-scroll px-4 py-4 space-y-3 bg-honeydew/35">
-          <div class="bg-warmWhite border border-espresso/10 rounded-2xl p-3.5 text-xs text-espressoLight leading-relaxed">
-            <p class="font-bold text-espresso mb-1">Waiting for a student to scan &amp; message…</p>
-            Type a message in the <strong>Student Phone</strong> on the left—it will appear here immediately so you can type and send a real reply back!
+        <div id="woz-messages" class="flex-1 overflow-y-auto chat-scroll px-4 py-4 space-y-3 bg-honeydew/50">
+          <div class="bg-warmCream comic-border-thin shadow-comic-xs rounded-2xl p-3.5 text-xs text-espresso leading-relaxed">
+            <p class="font-extrabold text-espresso mb-1">Waiting for a student to scan &amp; message…</p>
+            Type a message in the <strong>Student Phone</strong> on the left—it pops up here right away so you can send a real human reply back!
           </div>
         </div>
 
         <!-- Quick Volunteer Protocol Chips -->
-        <div class="px-3.5 pt-2 pb-1.5 bg-warmWhite border-t border-espresso/10 shrink-0">
-          <p class="text-[10px] font-bold uppercase tracking-wider text-espressoLight mb-1.5">Quick Volunteer Prompts:</p>
+        <div class="px-3.5 pt-2 pb-1.5 bg-warmCream border-t-2 border-espresso shrink-0">
+          <p class="text-[10px] font-extrabold uppercase tracking-wider text-espressoLight mb-1.5">Quick Volunteer Replies:</p>
           <div class="flex gap-1.5 overflow-x-auto pb-1 chat-scroll">
-            <button type="button" onclick="fillVolunteerPrompt('Hey! Glad you scanned the sticker. No rush at all—how is your day going so far?')" class="shrink-0 text-[11px] px-2.5 py-1 rounded-full bg-honeydew hover:bg-softPeach/50 text-espresso font-medium border border-espresso/15">
-              Warm hello
+            <button type="button" onclick="fillVolunteerPrompt('Hey! Glad you scanned the sticker. No rush at all—how is your day going so far?')" class="shrink-0 text-[11px] px-2.5 py-1 rounded-full bg-honeydew hover:bg-butterYellow text-espresso font-bold comic-border-thin">
+              👋 Warm hello
             </button>
-            <button type="button" onclick="fillVolunteerPrompt('That makes total sense. Campus can feel weirdly isolating even when it’s crowded. I’m listening if you want to vent.')" class="shrink-0 text-[11px] px-2.5 py-1 rounded-full bg-honeydew hover:bg-softPeach/50 text-espresso font-medium border border-espresso/15">
-              Validate &amp; listen
+            <button type="button" onclick="fillVolunteerPrompt('That makes total sense. Campus can feel weirdly isolating even when it’s crowded. I’m listening if you want to vent.')" class="shrink-0 text-[11px] px-2.5 py-1 rounded-full bg-honeydew hover:bg-butterYellow text-espresso font-bold comic-border-thin">
+              💛 Validate &amp; listen
             </button>
-            <button type="button" onclick="triggerOpenTableInvite()" class="shrink-0 text-[11px] px-2.5 py-1 rounded-full bg-softPeach/60 hover:bg-softPeach text-espresso font-semibold border border-coralGlow/30">
-              Offer 4pm Open Table
+            <button type="button" onclick="triggerOpenTableInvite()" class="shrink-0 text-[11px] px-2.5 py-1 rounded-full bg-butterYellow hover:bg-butterYellow/80 text-espresso font-extrabold comic-border-thin">
+              🟢 Offer 4pm Table
             </button>
           </div>
         </div>
 
         <!-- Volunteer Reply Input Bar -->
-        <form onsubmit="handleVolunteerReplySubmit(event)" class="p-3 bg-warmWhite flex items-end gap-2 shrink-0">
+        <form onsubmit="handleVolunteerReplySubmit(event)" class="p-3 bg-warmCream flex items-end gap-2 shrink-0">
           <textarea
             id="woz-input"
             rows="2"
             oninput="handleVolunteerTypingSignal(this)"
             onkeydown="handleVolunteerEnter(event)"
             placeholder="Write a real reply as the student volunteer…"
-            class="flex-1 max-h-28 rounded-2xl bg-skyBlue/10 border border-skyBlue/35 focus:border-skyBlue focus:ring-2 focus:ring-skyBlue/30 focus:outline-none px-3.5 py-2.5 text-sm text-espresso placeholder:text-espressoLight/65 resize-none"
+            class="flex-1 max-h-28 rounded-2xl bg-skyBlue/15 comic-border-thin focus:bg-warmCream focus:ring-2 focus:ring-skyBlue focus:outline-none px-3.5 py-2.5 text-sm font-medium text-espresso placeholder:text-espressoLight/70 resize-none"
           ></textarea>
           <button
             type="submit"
-            class="h-10 px-4 rounded-2xl bg-espresso hover:bg-espresso/90 active:scale-[0.98] text-honeydew font-bold text-sm shadow-sm transition-all shrink-0"
+            class="h-10 px-4 rounded-2xl bg-butterYellow hover:bg-butterYellow/85 text-espresso font-sticker font-bold text-sm btn-tactile shrink-0"
           >
             Reply
           </button>
@@ -370,95 +507,144 @@
     </div>
 
     <!-- ========================================================== -->
-    <!-- VIEW 3: PHYSICAL CAMPUS STICKER & CANTEEN TABLE CARD       -->
+    <!-- VIEW 3: PHYSICAL CAMPUS STICKERS & CANTEEN TABLE TENT      -->
     <!-- ========================================================== -->
-    <section id="view-sticker" class="hidden w-full max-w-2xl px-2 py-4 flex flex-col items-center">
-      <div class="text-center mb-6 max-w-md">
-        <span class="inline-block px-3 py-1 rounded-full bg-softPeach text-espresso text-xs font-bold mb-2">
-          Street Furniture as an Interface
+    <section id="view-sticker" class="hidden w-full max-w-4xl px-2 py-3 flex flex-col items-center">
+      <div class="text-center mb-5 max-w-lg">
+        <span class="inline-block px-3.5 py-1 rounded-full bg-butterYellow text-espresso text-xs font-extrabold comic-border-thin shadow-comic-xs mb-2">
+          ✦ Street Furniture as an Interface ✦
         </span>
-        <h2 class="font-display font-bold text-xl sm:text-2xl text-espresso">
-          Placed on campus benches, canteen tables &amp; station pillars
+        <h2 class="font-sticker font-bold text-2xl sm:text-3xl text-espresso tracking-tight">
+          Die-Cut Stickers &amp; Canteen Table Tents
         </h2>
-        <p class="text-xs sm:text-sm text-espressoLight mt-1">
-          Copies the visual language of AI chat bubbles, but tells students plainly that a real peer is behind it.
+        <p class="text-xs sm:text-sm font-semibold text-espressoLight mt-1">
+          Playful, retro comic speech-bubble stickers placed on campus benches, pillars, and canteen tables—inviting students into an unhurried human chat.
         </p>
       </div>
 
-      <!-- Two Physical Artifacts Side-by-Side -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full items-center">
+      <!-- Three Physical Artifacts Grid matching the Campus Photos -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full items-stretch">
         
-        <!-- Artifact 1: The Bench / Table QR Sticker -->
-        <div class="bg-warmWhite rounded-[2.2rem] rounded-bl-md p-6 border-2 border-espresso/15 shadow-sticker relative">
-          <div class="flex items-center justify-between mb-4">
-            <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-honeydew border border-espresso/10">
-              <span class="w-2.5 h-2.5 rounded-full bg-coralGlow dot-1"></span>
-              <span class="w-2.5 h-2.5 rounded-full bg-softPeach dot-2"></span>
-              <span class="w-2.5 h-2.5 rounded-full bg-skyBlue dot-3"></span>
+        <!-- ARTIFACT 1: Die-Cut "HUMAN TYPING..." Table Sticker -->
+        <div class="bg-warmCream rounded-[2.2rem] p-5 comic-border shadow-diecut flex flex-col justify-between relative">
+          <div>
+            <!-- Arched Retro Header -->
+            <div class="text-center font-sticker font-bold text-xl tracking-wide sticker-text-coral mb-2">
+              HUMAN TYPING…
             </div>
-            <span class="text-[11px] font-bold uppercase tracking-wider text-espressoLight">Canteen Sticker</span>
+
+            <!-- Two Buddy Speech Bubbles Illustration -->
+            <svg viewBox="0 0 220 92" class="w-44 h-18 mx-auto mb-2" fill="none">
+              <g transform="translate(96, 2)">
+                <path d="M16 4H96C104.837 4 112 11.1634 112 20V52C112 60.8366 104.837 68 96 68H86L94 82L70 68H16C7.16344 68 0 60.8366 0 52V20C0 11.1634 7.16344 4 16 4Z" fill="#F97B56" stroke="#241C1A" stroke-width="3.5" stroke-linejoin="round"/>
+                <circle cx="48" cy="31" r="4.5" fill="#241C1A"/>
+                <circle cx="76" cy="31" r="4.5" fill="#241C1A"/>
+                <path d="M53 42C56.5 48.5 67.5 48.5 71 42" stroke="#241C1A" stroke-width="3.2" stroke-linecap="round"/>
+              </g>
+              <g transform="translate(8, 14)">
+                <path d="M16 0H98C106.837 0 114 7.16344 114 16V48C114 56.8366 106.837 64 98 64H42L20 78L27 64H16C7.16344 64 0 56.8366 0 48V16C0 7.16344 7.16344 0 16 0Z" fill="#FCD36A" stroke="#241C1A" stroke-width="3.5" stroke-linejoin="round"/>
+                <circle cx="37" cy="32" r="5" fill="#FFFDF5" stroke="#241C1A" stroke-width="2.5"/>
+                <circle cx="57" cy="32" r="5" fill="#FFFDF5" stroke="#241C1A" stroke-width="2.5"/>
+                <circle cx="77" cy="32" r="5" fill="#FFFDF5" stroke="#241C1A" stroke-width="2.5"/>
+              </g>
+            </svg>
+
+            <div class="flex items-center gap-3 bg-honeydew rounded-2xl p-3 comic-border-thin mt-2">
+              <div class="text-left flex-1">
+                <p class="font-sticker font-bold text-sm text-espresso leading-tight">Not an AI.</p>
+                <p class="text-xs font-bold text-espressoLight leading-snug mt-0.5">
+                  An actual peer is on the other side. ✦
+                </p>
+              </div>
+              <!-- QR Box -->
+              <div class="w-14 h-14 bg-warmCream p-1 rounded-xl comic-border-thin shrink-0">
+                <svg viewBox="0 0 36 36" class="w-full h-full text-espresso" fill="currentColor">
+                  <path d="M2 2h10v10H2V2zm2 2v6h6V4H4zm2 2h2v2H6V6zm18-4h10v10H24V2zm2 2v6h6V4h-6zm2 2h2v2h-2V6zM2 24h10v10H2V24zm2 2v6h6v-6H4zm2 2h2v2H6v-2zm10-24h2v4h-2V4zm4 2h2v4h-2V6zm-4 6h4v2h-4v-2zm-2 4h6v2h-6v-2zm8-2h2v6h-2v-6zm4 2h4v2h-4v-2zM2 15h4v2H2v-2zm6 0h4v4H8v-4zm6 3h4v4h-4v-4zm-6 3h4v2H8v-2zm12 2h4v2h-4v-2zm6-2h2v4h-2v-4zm4 2h4v4h-4v-4zm-10 4h4v4h-4v-4zm6 4h4v3h-4v-3zm-12 0h4v3h-4v-3z"/>
+                </svg>
+              </div>
+            </div>
           </div>
 
-          <h3 class="font-display font-bold text-2xl text-espresso tracking-tight mb-2">
-            Human typing…
-          </h3>
-          <p class="text-sm font-medium text-espresso leading-snug mb-4">
-            Not an AI. A trained student volunteer from your campus. Replies in a few minutes.
-          </p>
-
-          <!-- Simulated Scannable QR Code -->
-          <div class="bg-honeydew rounded-2xl p-3.5 border border-espresso/10 flex items-center gap-3.5">
-            <div class="w-16 h-16 bg-warmWhite p-1.5 rounded-xl border border-espresso/15 shrink-0 flex items-center justify-center">
-              <svg viewBox="0 0 36 36" class="w-full h-full text-espresso" fill="currentColor">
-                <path d="M2 2h10v10H2V2zm2 2v6h6V4H4zm2 2h2v2H6V6zm18-4h10v10H24V2zm2 2v6h6V4h-6zm2 2h2v2h-2V6zM2 24h10v10H2V24zm2 2v6h6v-6H4zm2 2h2v2H6v-2zm10-24h2v4h-2V4zm4 2h2v4h-2V6zm-4 6h4v2h-4v-2zm-2 4h6v2h-6v-2zm8-2h2v6h-2v-6zm4 2h4v2h-4v-2zM2 15h4v2H2v-2zm6 0h4v4H8v-4zm6 3h4v4h-4v-4zm-6 3h4v2H8v-2zm12 2h4v2h-4v-2zm6-2h2v4h-2v-4zm4 2h4v4h-4v-4zm-10 4h4v4h-4v-4zm6 4h4v3h-4v-3zm-12 0h4v3h-4v-3z"/>
-              </svg>
-            </div>
-            <div>
-              <p class="text-xs font-bold text-espresso">Scan to message anonymously</p>
-              <p class="text-[11px] text-espressoLight mt-0.5">No app. No name. Opens right in your browser.</p>
-              <button onclick="switchView('phone')" class="mt-1.5 text-xs font-bold text-coralGlow hover:underline">
-                Simulate scan →
-              </button>
-            </div>
-          </div>
-
-          <div class="mt-4 pt-3 border-t border-espresso/10 text-center">
-            <span class="text-xs font-semibold text-espressoLight italic">
-              “Instant is easy. Real takes a moment, and it is worth it.”
-            </span>
-          </div>
+          <button onclick="switchView('phone')" class="mt-4 w-full py-2.5 rounded-xl bg-butterYellow text-espresso font-sticker font-bold text-xs btn-tactile">
+            Simulate Scanning Sticker →
+          </button>
         </div>
 
-        <!-- Artifact 2: The 4 PM Canteen Open Table Tent Card -->
-        <div class="bg-softPeach/70 rounded-[2.2rem] p-6 border-2 border-coralGlow/40 shadow-sticker flex flex-col justify-between">
+        <!-- ARTIFACT 2: "FEELING LONELY? LET'S TALK FOR REAL!" Wavy Ribbon Mascot Sticker -->
+        <div class="bg-warmCream rounded-[2.2rem] p-5 comic-border shadow-diecut flex flex-col justify-between relative overflow-hidden">
           <div>
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-warmWhite text-espresso text-xs font-bold mb-4 shadow-sm">
-              <span class="w-3 h-3 rounded-full bg-leafGreen green-dot-pulse"></span>
-              <span>Open Table · 4:00 PM Daily</span>
+            <div class="flex items-center justify-between mb-2">
+              <span class="px-2.5 py-0.5 rounded-full bg-skyBlue/35 border border-espresso text-[10px] font-extrabold">Bench Banner Sticker</span>
+              <span class="text-coralGlow font-bold">✿</span>
             </div>
 
-            <h3 class="font-display font-bold text-xl text-espresso leading-snug mb-2">
-              Marked with a green dot.
-            </h3>
-            <p class="text-sm text-espresso/90 leading-relaxed mb-4">
-              Come sit with a chai or your headphones on. It’s a shared group table—you don’t have to talk, introduce yourself, or explain anything.
-            </p>
+            <!-- Wavy Two-Tone Ribbon Illustration -->
+            <div class="my-2 space-y-1.5">
+              <div class="bg-coralGlow comic-border-thin rounded-2xl px-3 py-2 text-center -rotate-1 shadow-comic-xs">
+                <span class="font-sticker font-bold text-sm sm:text-base text-butterYellow tracking-wide" style="-webkit-text-stroke: 1px #241C1A; paint-order: stroke fill;">
+                  FEELING LONELY?
+                </span>
+              </div>
+              <div class="bg-skyBlue comic-border-thin rounded-2xl px-3 py-2 text-center rotate-1 shadow-comic-xs">
+                <span class="font-sticker font-bold text-sm sm:text-base text-warmCream tracking-wide" style="-webkit-text-stroke: 1px #241C1A; paint-order: stroke fill;">
+                  LET’S TALK FOR REAL!
+                </span>
+              </div>
+            </div>
+
+            <!-- Cute Cartoon Legs & QR Mascot Row -->
+            <div class="mt-3 flex items-center justify-between bg-honeydew rounded-2xl p-3 comic-border-thin">
+              <div class="text-xs font-bold text-espresso leading-snug pr-2">
+                No bot scripts. Just a campus peer listening between classes.
+              </div>
+              <div class="w-14 h-14 bg-warmCream p-1 rounded-xl comic-border-thin shrink-0 relative">
+                <svg viewBox="0 0 36 36" class="w-full h-full text-espresso" fill="currentColor">
+                  <path d="M2 2h10v10H2V2zm2 2v6h6V4H4zm2 2h2v2H6V6zm18-4h10v10H24V2zm2 2v6h6V4h-6zm2 2h2v2h-2V6zM2 24h10v10H2V24zm2 2v6h6v-6H4zm2 2h2v2H6v-2zm10-24h2v4h-2V4zm4 2h2v4h-2V6zm-4 6h4v2h-4v-2zm-2 4h6v2h-6v-2zm8-2h2v6h-2v-6zm4 2h4v2h-4v-2zM2 15h4v2H2v-2zm6 0h4v4H8v-4zm6 3h4v4h-4v-4zm-6 3h4v2H8v-2zm12 2h4v2h-4v-2zm6-2h2v4h-2v-4zm4 2h4v4h-4v-4zm-10 4h4v4h-4v-4zm6 4h4v3h-4v-3zm-12 0h4v3h-4v-3z"/>
+                </svg>
+              </div>
+            </div>
           </div>
 
-          <div class="bg-warmWhite/90 rounded-2xl p-3.5 border border-espresso/10 space-y-2 text-xs text-espresso">
-            <div class="flex items-center gap-2">
-              <span class="text-leafGreen font-bold">✓</span>
-              <span>Group canteen table, never 1-on-1 pressure</span>
+          <button onclick="switchView('woz')" class="mt-4 w-full py-2.5 rounded-xl bg-skyBlue/55 text-espresso font-sticker font-bold text-xs btn-tactile">
+            Open Live Volunteer Demo →
+          </button>
+        </div>
+
+        <!-- ARTIFACT 3: Folded Yellow Canteen Table Tent + 4 PM Green Dot -->
+        <div class="bg-butterYellow rounded-[2.2rem] p-5 comic-border shadow-diecut flex flex-col justify-between">
+          <div>
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-warmCream text-espresso text-xs font-extrabold comic-border-thin shadow-comic-xs mb-3">
+              <span class="w-2.5 h-2.5 rounded-full bg-leafGreen border border-espresso green-dot-pulse"></span>
+              <span>Canteen Table Tent · 4 PM</span>
             </div>
-            <div class="flex items-center gap-2">
-              <span class="text-leafGreen font-bold">✓</span>
-              <span>Stay for 2 minutes or 40 minutes</span>
+
+            <div class="bg-warmCream rounded-2xl p-3.5 comic-border-thin shadow-comic-xs text-center mb-3">
+              <div class="font-sticker font-bold text-lg text-espresso leading-tight">
+                HUMAN TYPING…
+              </div>
+              <div class="text-[11px] font-extrabold uppercase tracking-wider text-coralGlow mt-0.5">
+                (ANONYMOUS PEER CHAT)
+              </div>
+              <p class="text-xs font-bold text-espresso mt-2 pt-2 border-t border-espresso/20 italic">
+                “Instant is easy, real takes a moment.”
+              </p>
             </div>
-            <div class="flex items-center gap-2">
-              <span class="text-leafGreen font-bold">✓</span>
-              <span>Hosted by trained campus volunteers</span>
+
+            <div class="space-y-1.5 text-xs font-bold text-espresso">
+              <div class="flex items-center gap-2">
+                <span class="w-4 h-4 rounded-full bg-leafGreen text-warmCream flex items-center justify-center text-[10px] border border-espresso">✓</span>
+                <span>Look for the green dot at 4:00 PM</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="w-4 h-4 rounded-full bg-leafGreen text-warmCream flex items-center justify-center text-[10px] border border-espresso">✓</span>
+                <span>Bring chai or keep headphones on</span>
+              </div>
             </div>
           </div>
+
+          <button onclick="switchView('phone'); setTimeout(triggerOpenTableInvite, 120);" class="mt-4 w-full py-2.5 rounded-xl bg-coralGlow text-espresso font-sticker font-bold text-xs btn-tactile">
+            Preview 4 PM Invite Card →
+          </button>
         </div>
 
       </div>
@@ -469,73 +655,73 @@
   <!-- ======================================================== -->
   <!-- SAFETY & HELPLINE MODAL (Mumbai / India Student Support) -->
   <!-- ======================================================== -->
-  <div id="safety-modal" class="hidden fixed inset-0 z-50 bg-espresso/45 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-warmWhite rounded-3xl max-w-md w-full p-6 border-2 border-tomatoJam/25 shadow-2xl msg-enter">
+  <div id="safety-modal" class="hidden fixed inset-0 z-50 bg-espresso/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-warmCream rounded-3xl max-w-md w-full p-6 comic-border shadow-comic-lg msg-enter">
       <div class="flex items-start justify-between gap-3 mb-3">
         <div class="flex items-center gap-2.5">
-          <span class="w-8 h-8 rounded-2xl bg-tomatoJam/15 text-tomatoJam flex items-center justify-center font-bold">
+          <span class="w-9 h-9 rounded-2xl bg-tomatoJam text-warmCream comic-border-thin flex items-center justify-center font-bold text-base">
             ♥
           </span>
           <div>
-            <h3 class="font-display font-extrabold text-lg text-espresso">Free, Confidential Support</h3>
-            <p class="text-xs text-espressoLight">Peer chat is not therapy or crisis care.</p>
+            <h3 class="font-sticker font-bold text-xl text-espresso">Free, Confidential Support</h3>
+            <p class="text-xs font-bold text-espressoLight">Peer chat is not therapy or crisis care.</p>
           </div>
         </div>
-        <button onclick="toggleSafetyModal(false)" class="w-8 h-8 rounded-full bg-honeydew hover:bg-softPeach/60 flex items-center justify-center text-espresso font-bold">
+        <button onclick="toggleSafetyModal(false)" class="w-8 h-8 rounded-full bg-butterYellow hover:bg-butterYellow/80 comic-border-thin flex items-center justify-center text-espresso font-extrabold">
           ✕
         </button>
       </div>
 
-      <p class="text-xs sm:text-sm text-espresso/90 leading-relaxed mb-4">
+      <p class="text-xs sm:text-sm font-medium text-espresso leading-relaxed mb-4">
         Our student volunteers are trained peers here for everyday loneliness and stress. If you are feeling overwhelmed, unsafe, or in distress, please reach out to trained counsellors right away:
       </p>
 
       <div class="space-y-2.5 mb-5">
         <!-- iCall (TISS Mumbai) -->
-        <div class="p-3.5 rounded-2xl bg-honeydew border border-espresso/10">
+        <div class="p-3.5 rounded-2xl bg-honeydew comic-border-thin shadow-comic-xs">
           <div class="flex items-center justify-between">
-            <span class="font-display font-bold text-sm text-espresso">iCall (TISS Mumbai)</span>
-            <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-skyBlue/25 text-espresso">Mon–Sat · 10am–8pm</span>
+            <span class="font-sticker font-bold text-sm text-espresso">iCall (TISS Mumbai)</span>
+            <span class="text-[11px] font-extrabold px-2 py-0.5 rounded-full bg-skyBlue/40 border border-espresso text-espresso">Mon–Sat · 10am–8pm</span>
           </div>
-          <p class="text-xs text-espressoLight mt-0.5">Free telephone &amp; email counselling by trained professionals.</p>
+          <p class="text-xs font-medium text-espressoLight mt-0.5">Free telephone &amp; email counselling by trained professionals.</p>
           <a href="tel:9152987821" class="inline-block mt-1.5 text-sm font-extrabold text-tomatoJam hover:underline">
-            Call 9152987821
+            📞 Call 9152987821
           </a>
         </div>
 
         <!-- Vandrevala Foundation -->
-        <div class="p-3.5 rounded-2xl bg-honeydew border border-espresso/10">
+        <div class="p-3.5 rounded-2xl bg-honeydew comic-border-thin shadow-comic-xs">
           <div class="flex items-center justify-between">
-            <span class="font-display font-bold text-sm text-espresso">Vandrevala Foundation</span>
-            <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-softPeach text-espresso">24/7 Helpline</span>
+            <span class="font-sticker font-bold text-sm text-espresso">Vandrevala Foundation</span>
+            <span class="text-[11px] font-extrabold px-2 py-0.5 rounded-full bg-butterYellow border border-espresso text-espresso">24/7 Helpline</span>
           </div>
-          <p class="text-xs text-espressoLight mt-0.5">24-hour free emotional support across India (Call or WhatsApp).</p>
+          <p class="text-xs font-medium text-espressoLight mt-0.5">24-hour free emotional support across India (Call or WhatsApp).</p>
           <a href="tel:+919999666555" class="inline-block mt-1.5 text-sm font-extrabold text-tomatoJam hover:underline">
-            Call / WhatsApp +91 9999 666 555
+            📞 Call / WhatsApp +91 9999 666 555
           </a>
         </div>
 
         <!-- AASRA (Navi Mumbai / Mumbai) -->
-        <div class="p-3.5 rounded-2xl bg-honeydew border border-espresso/10">
+        <div class="p-3.5 rounded-2xl bg-honeydew comic-border-thin shadow-comic-xs">
           <div class="flex items-center justify-between">
-            <span class="font-display font-bold text-sm text-espresso">AASRA (Mumbai)</span>
-            <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-softPeach text-espresso">24/7 Crisis Line</span>
+            <span class="font-sticker font-bold text-sm text-espresso">AASRA (Mumbai)</span>
+            <span class="text-[11px] font-extrabold px-2 py-0.5 rounded-full bg-butterYellow border border-espresso text-espresso">24/7 Crisis Line</span>
           </div>
           <a href="tel:+919820466726" class="inline-block mt-1 text-sm font-extrabold text-tomatoJam hover:underline">
-            Call +91 9820466726
+            📞 Call +91 9820466726
           </a>
         </div>
       </div>
 
-      <button onclick="toggleSafetyModal(false)" class="w-full py-3 rounded-2xl bg-espresso text-honeydew font-display font-bold text-sm hover:opacity-95 transition-opacity">
+      <button onclick="toggleSafetyModal(false)" class="w-full py-3 rounded-2xl bg-butterYellow text-espresso font-sticker font-bold text-base btn-tactile">
         Return to Human Typing…
       </button>
     </div>
   </div>
 
   <!-- Subtle Footer Note -->
-  <footer class="text-center text-[11px] text-espressoLight mt-2 px-4">
-    Designed for Mumbai University Campuses · Human Typing… Prototype
+  <footer class="text-center text-[11px] font-bold text-espressoLight mt-2 px-4">
+    Designed for Mumbai University Campuses ✦ Human Typing… Prototype
   </footer>
 
   <!-- ========================================== -->
@@ -569,8 +755,8 @@
       const tabWoz = document.getElementById('tab-woz');
       const tabSticker = document.getElementById('tab-sticker');
 
-      const activeBtnClass = 'px-3.5 py-1.5 rounded-xl sm:rounded-full text-xs sm:text-sm font-semibold transition-all bg-espresso text-honeydew shadow-sm flex items-center gap-1.5';
-      const inactiveBtnClass = 'px-3.5 py-1.5 rounded-xl sm:rounded-full text-xs sm:text-sm font-semibold transition-all text-espressoLight hover:text-espresso flex items-center gap-1.5';
+      const activeBtnClass = 'px-3.5 py-1.5 rounded-xl sm:rounded-full text-xs sm:text-sm font-bold transition-all bg-butterYellow text-espresso comic-border-thin shadow-comic-xs flex items-center gap-1.5';
+      const inactiveBtnClass = 'px-3.5 py-1.5 rounded-xl sm:rounded-full text-xs sm:text-sm font-bold transition-all text-espressoLight hover:text-espresso flex items-center gap-1.5';
 
       tabPhone.className = newMode === 'phone' ? activeBtnClass : inactiveBtnClass;
       tabWoz.className = newMode === 'woz' ? activeBtnClass : inactiveBtnClass;
@@ -585,9 +771,8 @@
 
         if (newMode === 'woz') {
           wozVolunteer.classList.remove('hidden');
-          document.getElementById('pace-strip-label').textContent = 'Live Wizard-of-Oz mode: reply from the right panel.';
+          document.getElementById('pace-strip-label').textContent = 'Live Wizard-of-Oz: reply from right panel.';
           document.getElementById('skip-wait-btn').classList.add('hidden');
-          // Cancel auto-timer if switching into manual Wizard-of-Oz mode mid-wait
           clearTimers();
           if (state.isWaitingForHuman) {
             document.getElementById('wait-status-title').textContent = 'A peer volunteer is reading your message…';
@@ -597,7 +782,6 @@
           wozVolunteer.classList.add('hidden');
           document.getElementById('pace-strip-label').textContent = '⏳ Human pace: real replies take a moment.';
           document.getElementById('skip-wait-btn').classList.remove('hidden');
-          // If waiting in WoZ mode and switched back to single phone mode, trigger auto-reply
           if (state.isWaitingForHuman && state.messages.length > 0) {
             const lastStudentMsg = [...state.messages].reverse().find(m => m.sender === 'student');
             if (lastStudentMsg) {
@@ -639,7 +823,7 @@
       const text = input.value.trim();
       if (!text) {
         input.focus();
-        input.placeholder = "Type a quick hello or tap one of the starters below…";
+        input.placeholder = "Type a quick hello or tap one of the sticker starters below…";
         return;
       }
       input.value = '';
@@ -773,7 +957,6 @@
       wozInput.value = '';
       wozInput.style.height = 'auto';
 
-      // Ensure student view is visible if volunteer replies directly
       if (!document.getElementById('screen-landing').classList.contains('hidden')) {
         document.getElementById('screen-landing').classList.add('hidden');
         document.getElementById('screen-chat').classList.remove('hidden');
@@ -798,7 +981,7 @@
       renderAllMessages();
     }
 
-    // Human Delay & Auto-Peer Engine (for testing solo in Mobile Chat view)
+    // Human Delay & Auto-Peer Engine
     function scheduleAutoPeerReply(studentText) {
       clearTimers();
       const replyText = generateContextAwarePeerReply(studentText, state.userTurnCount);
@@ -819,7 +1002,6 @@
         }
       };
 
-      // Stage 1 -> Stage 2 transition ("Reading" -> "Human is typing...")
       state.waitTimeoutReading = setTimeout(() => {
         if (state.isWaitingForHuman && state.mode === 'phone') {
           showHumanWaitBanner(
@@ -829,7 +1011,6 @@
         }
       }, 1600);
 
-      // Stage 2 -> Deliver reply (~3.6 seconds total)
       state.waitTimeoutReply = setTimeout(() => {
         if (state.mode === 'phone' && typeof state.pendingAutoReply === 'function') {
           const fn = state.pendingAutoReply;
@@ -863,7 +1044,6 @@
 
     // Trigger the 4 PM Open Table Card manually or automatically
     function triggerOpenTableInvite() {
-      // If still on landing screen, move into chat first
       if (!document.getElementById('screen-landing').classList.contains('hidden')) {
         document.getElementById('screen-landing').classList.add('hidden');
         document.getElementById('screen-chat').classList.remove('hidden');
@@ -893,7 +1073,6 @@
     function generateContextAwarePeerReply(text, turn) {
       const lower = text.toLowerCase();
 
-      // Detect emotional/contextual themes
       const isBored = /\b(bored|nothing|waiting|pass time|free period|gap)\b/.test(lower);
       const isAcademic = /\b(exam|submission|assignment|deadline|viva|placement|internship|study|grades|attendance|kt|professor)\b/.test(lower);
       const isLonely = /\b(lonely|alone|out of place|disconnect|left out|no friends|new here|homesick|hostel|pg)\b/.test(lower);
@@ -955,7 +1134,6 @@
         ]);
       }
 
-      // Natural multi-turn follow-ups reflecting back what the user wrote
       if (turn === 1) {
         return pickUnique([
           "Hey, thanks for messaging—it takes a tiny bit of courage to write to a real person instead of an app. I’m listening, so say as much or as little as you want.",
@@ -984,111 +1162,111 @@
       return keywords.some(k => lower.includes(k));
     }
 
-    // Render Both Student Feed & Volunteer Mirrored Feed
+    // Render Both Student Feed & Volunteer Mirrored Feed (Sticker-Book Chat Bubbles)
     function renderAllMessages() {
       const studentContainer = document.getElementById('chat-messages');
       const wozContainer = document.getElementById('woz-messages');
 
-      // Student Welcome Header Card
+      // Student Welcome Header Sticker Card
       let studentHTML = `
-        <div class="bg-warmWhite/90 border border-espresso/10 rounded-2xl p-3.5 text-xs text-espressoLight leading-relaxed shadow-xs">
-          <div class="flex items-center gap-1.5 font-bold text-espresso mb-1">
-            <span class="w-2 h-2 rounded-full bg-skyBlue"></span>
-            <span>Connected to a trained campus peer</span>
+        <div class="bg-warmCream comic-border-thin shadow-comic-xs rounded-2xl p-3 text-xs font-medium text-espresso leading-relaxed">
+          <div class="flex items-center gap-1.5 font-extrabold text-espresso mb-0.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-skyBlue border border-espresso"></span>
+            <span>Connected to a trained campus peer ✦</span>
           </div>
-          No names needed. Say as much or as little as you want—there’s zero rush here.
+          No names needed. Say as much or as little as you want—zero rush here.
         </div>
       `;
 
       // Volunteer Inbox Header Card
       let wozHTML = state.messages.length === 0 ? `
-        <div class="bg-warmWhite border border-espresso/10 rounded-2xl p-3.5 text-xs text-espressoLight leading-relaxed">
-          <p class="font-bold text-espresso mb-1">Waiting for a student to scan &amp; message…</p>
-          Type a message in the <strong>Student Phone</strong> on the left—it will appear here immediately so you can type and send a real reply back!
+        <div class="bg-warmCream comic-border-thin shadow-comic-xs rounded-2xl p-3.5 text-xs font-medium text-espresso leading-relaxed">
+          <p class="font-extrabold text-espresso mb-1">Waiting for a student to scan &amp; message…</p>
+          Type a message in the <strong>Student Phone</strong> on the left—it pops up here right away so you can send a real human reply back!
         </div>
       ` : '';
 
       state.messages.forEach(msg => {
         if (msg.sender === 'student') {
-          // Student view: right-aligned Soft Peach bubble
+          // Student view: right-aligned Buttery Yellow comic speech bubble
           studentHTML += `
             <div class="flex flex-col items-end msg-enter">
-              <div class="max-w-[82%] bg-softPeach text-espresso rounded-2xl rounded-br-sm px-4 py-2.5 text-sm leading-relaxed shadow-card border border-espresso/10 whitespace-pre-wrap">${escapeHTML(msg.text)}</div>
-              <span class="text-[10px] text-espressoLight mt-1 mr-1">You · ${msg.time}</span>
+              <div class="max-w-[82%] bg-butterYellow text-espresso rounded-2xl rounded-br-sm px-4 py-2.5 text-sm font-semibold leading-relaxed comic-border-thin shadow-comic-xs whitespace-pre-wrap">${escapeHTML(msg.text)}</div>
+              <span class="text-[10px] font-bold text-espressoLight mt-1 mr-1">You · ${msg.time}</span>
             </div>
           `;
           // Volunteer view: left-aligned incoming student message
           wozHTML += `
             <div class="flex flex-col items-start msg-enter">
-              <div class="max-w-[85%] bg-softPeach/80 text-espresso rounded-2xl rounded-bl-sm px-4 py-2.5 text-sm leading-relaxed shadow-xs border border-espresso/10 whitespace-pre-wrap">${escapeHTML(msg.text)}</div>
-              <span class="text-[10px] text-espressoLight mt-1 ml-1">Anonymous Student · ${msg.time}</span>
+              <div class="max-w-[85%] bg-butterYellow text-espresso rounded-2xl rounded-bl-sm px-4 py-2.5 text-sm font-semibold leading-relaxed comic-border-thin shadow-comic-xs whitespace-pre-wrap">${escapeHTML(msg.text)}</div>
+              <span class="text-[10px] font-bold text-espressoLight mt-1 ml-1">Anonymous Student · ${msg.time}</span>
             </div>
           `;
         } else if (msg.sender === 'volunteer') {
-          // Student view: left-aligned Warm White + Sky Blue border bubble
+          // Student view: left-aligned Warm Cream comic bubble with Sky-Blue peer tag
           studentHTML += `
             <div class="flex flex-col items-start msg-enter">
-              <div class="max-w-[85%] bg-warmWhite text-espresso rounded-2xl rounded-bl-sm px-4 py-2.5 text-sm leading-relaxed shadow-card border-l-4 border-l-skyBlue border border-espresso/10 whitespace-pre-wrap">${escapeHTML(msg.text)}</div>
-              <span class="text-[10px] text-espressoLight mt-1 ml-1">Campus Peer Volunteer · ${msg.time}</span>
+              <div class="max-w-[85%] bg-warmCream text-espresso rounded-2xl rounded-bl-sm px-4 py-2.5 text-sm font-medium leading-relaxed comic-border-thin shadow-comic-xs border-l-[5px] border-l-skyBlue whitespace-pre-wrap">${escapeHTML(msg.text)}</div>
+              <span class="text-[10px] font-bold text-espressoLight mt-1 ml-1">Campus Peer Volunteer · ${msg.time}</span>
             </div>
           `;
           // Volunteer view: right-aligned outgoing volunteer message
           wozHTML += `
             <div class="flex flex-col items-end msg-enter">
-              <div class="max-w-[85%] bg-skyBlue/20 text-espresso rounded-2xl rounded-br-sm px-4 py-2.5 text-sm leading-relaxed shadow-xs border border-skyBlue/35 whitespace-pre-wrap">${escapeHTML(msg.text)}</div>
-              <span class="text-[10px] text-espressoLight mt-1 mr-1">You (Volunteer) · ${msg.time}</span>
+              <div class="max-w-[85%] bg-skyBlue/35 text-espresso rounded-2xl rounded-br-sm px-4 py-2.5 text-sm font-semibold leading-relaxed comic-border-thin shadow-comic-xs whitespace-pre-wrap">${escapeHTML(msg.text)}</div>
+              <span class="text-[10px] font-bold text-espressoLight mt-1 mr-1">You (Volunteer) · ${msg.time}</span>
             </div>
           `;
         } else if (msg.sender === 'open_table') {
           const rsvpFooter = state.rsvpConfirmed
-            ? `<div class="w-full py-2 px-3 rounded-xl bg-leafGreen/15 border border-leafGreen/30 text-espresso flex items-center justify-between text-xs font-bold">
-                 <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-leafGreen"></span>Noted! Look for the green dot at 4:00 PM.</span>
-                 <span class="text-leafGreen">✓</span>
+            ? `<div class="w-full py-2 px-3 rounded-xl bg-leafGreen text-warmCream comic-border-thin flex items-center justify-between text-xs font-extrabold">
+                 <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-butterYellow border border-espresso"></span>Noted! Look for the green dot at 4:00 PM.</span>
+                 <span>✓</span>
                </div>`
-            : `<button type="button" onclick="confirmOpenTableRSVP()" class="w-full py-2.5 px-3.5 rounded-xl bg-coralGlow hover:bg-[#f27649] text-warmWhite font-bold text-xs shadow-xs transition-colors">
-                 I might drop by (zero obligation)
+            : `<button type="button" onclick="confirmOpenTableRSVP()" class="w-full py-2.5 px-3.5 rounded-xl bg-coralGlow hover:bg-[#f76c43] text-espresso font-sticker font-bold text-sm btn-tactile">
+                 I might drop by (zero obligation) ✦
                </button>`;
 
           const cardHTML = `
-            <div class="msg-enter my-1 bg-gradient-to-br from-softPeach/75 to-warmWhite rounded-3xl p-4 border-2 border-coralGlow/45 shadow-card">
+            <div class="msg-enter my-1.5 bg-butterYellow rounded-3xl p-4 comic-border shadow-comic">
               <div class="flex items-center justify-between mb-2">
-                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-warmWhite text-espresso text-[11px] font-bold shadow-xs">
-                  <span class="w-2.5 h-2.5 rounded-full bg-leafGreen green-dot-pulse"></span>
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-warmCream text-espresso text-[11px] font-extrabold comic-border-thin">
+                  <span class="w-2.5 h-2.5 rounded-full bg-leafGreen border border-espresso green-dot-pulse"></span>
                   <span>Small Human Step</span>
                 </span>
-                <span class="text-[11px] font-semibold text-espressoLight">4:00 PM · Canteen</span>
+                <span class="text-[11px] font-extrabold text-espresso bg-warmCream/80 px-2 py-0.5 rounded-full border border-espresso">4:00 PM · Canteen</span>
               </div>
-              <p class="text-sm font-semibold text-espresso leading-snug mb-2">
+              <p class="text-sm font-extrabold text-espresso leading-snug mb-1.5">
                 “There’s an Open Table in the canteen at 4 pm, marked with a green dot. Come sit; you don’t have to talk.”
               </p>
-              <p class="text-xs text-espressoLight mb-3">
-                It’s a relaxed group table, not a 1-on-1 meetup—bring chai or keep your headphones on.
+              <p class="text-xs font-semibold text-espresso/85 mb-3">
+                It’s a relaxed group table, never 1-on-1 pressure—bring chai or keep your headphones on.
               </p>
               ${rsvpFooter}
             </div>
           `;
           studentHTML += cardHTML;
           wozHTML += `
-            <div class="text-center my-1">
-              <span class="inline-block px-3 py-1 rounded-full bg-softPeach/60 text-espresso text-[11px] font-semibold">
-                ● Sent 4:00 PM Open Table Canteen Invitation ${state.rsvpConfirmed ? '(Student clicked "I might drop by")' : ''}
+            <div class="text-center my-1.5">
+              <span class="inline-block px-3 py-1 rounded-full bg-butterYellow text-espresso text-[11px] font-extrabold comic-border-thin">
+                ● Sent 4:00 PM Open Table Canteen Invitation ${state.rsvpConfirmed ? '(Student clicked "I might drop by" ✓)' : ''}
               </span>
             </div>
           `;
         } else if (msg.sender === 'safety') {
           const safetyHTML = `
-            <div class="msg-enter bg-tomatoJam/10 border border-tomatoJam/30 rounded-2xl p-3.5 text-xs text-espresso">
-              <p class="font-bold text-tomatoJam mb-1">You don’t have to carry this alone.</p>
-              <p class="leading-relaxed mb-2">Peer volunteers aren’t counsellors—please connect with free, confidential professionals right away:</p>
+            <div class="msg-enter bg-tomatoJam/15 comic-border-thin shadow-comic-xs rounded-2xl p-3.5 text-xs text-espresso">
+              <p class="font-extrabold text-tomatoJam mb-1">You don’t have to carry this alone.</p>
+              <p class="font-medium leading-relaxed mb-2">Peer volunteers aren’t counsellors—please connect with free, confidential professionals right away:</p>
               <div class="flex flex-wrap gap-2">
-                <a href="tel:9152987821" class="px-3 py-1.5 rounded-xl bg-tomatoJam text-warmWhite font-bold">Call iCall: 9152987821</a>
-                <button type="button" onclick="toggleSafetyModal(true)" class="px-3 py-1.5 rounded-xl bg-warmWhite text-tomatoJam font-bold border border-tomatoJam/25">24/7 Helplines</button>
+                <a href="tel:9152987821" class="px-3 py-1.5 rounded-xl bg-tomatoJam text-warmCream font-extrabold border border-espresso">Call iCall: 9152987821</a>
+                <button type="button" onclick="toggleSafetyModal(true)" class="px-3 py-1.5 rounded-xl bg-warmCream text-tomatoJam font-extrabold border border-espresso">24/7 Helplines</button>
               </div>
             </div>
           `;
           studentHTML += safetyHTML;
           wozHTML += `
-            <div class="bg-tomatoJam/10 border border-tomatoJam/30 rounded-2xl p-3 text-xs text-tomatoJam font-semibold">
+            <div class="bg-tomatoJam/15 comic-border-thin rounded-2xl p-3 text-xs text-tomatoJam font-extrabold">
               ⚠️ Safety Protocol Triggered: Helpline card surfaced to student. Follow escalation guide.
             </div>
           `;
